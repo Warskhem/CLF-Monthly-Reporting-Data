@@ -610,23 +610,68 @@ function populate(d) {
 // ═══════════════════════════════════════════════════
 //  Main fetch function — uses no-cors via redirect
 // ═══════════════════════════════════════════════════
-async function loadDashboardData(month) {
+
+  async function loadDashboardData(month) {
+
   setBanner('loading', 'Connecting to Google Sheets… please wait.');
-  const url = SCRIPT_URL + (month && month !== 'All' ? '?month=' + encodeURIComponent(month) : '') + (month ? '&' : '?') + 't=' + Date.now();
+
+  const url =
+    SCRIPT_URL +
+    (month && month !== 'All'
+      ? '?month=' + encodeURIComponent(month)
+      : '') +
+    (month ? '&' : '?') +
+    't=' + Date.now();
+
   try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('HTTP ' + res.status + ' — check deployment settings');
+
+    const res = await fetch(url, {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error('HTTP ' + res.status);
+    }
+
     const data = await res.json();
-    if (data.error) throw new Error(data.error);
+
+    if (!data) {
+      throw new Error('No response received');
+    }
+
+    if (data.error) {
+      throw new Error(data.error);
+    }
+
     if (data.noData) {
-      setBanner('loading', 'Connected. No data submitted yet for ' + (month || 'any month') + '.');
+      setBanner(
+        'loading',
+        'Connected. No data submitted yet for ' +
+          (month || 'any month') +
+          '.'
+      );
       return;
     }
+
     populate(data);
-    setBanner('success', '✓ Data loaded successfully from Google Sheets.');
+
+    setBanner(
+      'success',
+      '✓ Data loaded successfully from Google Sheets.'
+    );
+
   } catch (err) {
-    setBanner('error', '✗ ' + err.message + ' — Open this file via the Apps Script Web App URL, not file://');
+
     console.error('CLF Dashboard error:', err);
+
+    setBanner(
+      'error',
+      '✗ Unable to connect to Google Apps Script. Check deployment access and CORS permissions.'
+    );
   }
 }
 
