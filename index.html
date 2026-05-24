@@ -103,8 +103,7 @@ table.data-table tr:hover td{background:rgba(255,255,255,.02)}
   <div class="topbar-left">
     <div class="logo-dot"></div>
     <div>
-      <div class="topbar-title"><title>CLF Performance Dashboard</title>
-<link rel="icon" href="data:,"></div>
+      <div class="topbar-title">CLF Performance Dashboard</div>
       <div class="topbar-sub">Cluster Level Federation · Consolidated View</div>
     </div>
   </div>
@@ -302,8 +301,8 @@ table.data-table tr:hover td{background:rgba(255,255,255,.02)}
 </div>
 
 <script>
+
 // ── CONFIG ──────────────────────────────────────────────────────
-// JSONP bypasses CORS — works on GitHub Pages, file://, anywhere
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwIzwaJd1e4SNmNF89lRWe6ZSMwerVfGaAwXGPE4NUVA13mGb_J8aw0grbDELThbhza/exec';
 
 // ── Chart registry ───────────────────────────────────────────────
@@ -329,110 +328,4 @@ function setBanner(type,msg){
   if(sp)sp.style.display=(type==='loading')?'block':'none';
   if(bk){bk.textContent=type==='success'?'Live':type==='error'?'Error':'Loading…';bk.className='badge '+(type==='success'?'badge-green':type==='error'?'badge-red':'badge-blue');}
 }
-
-// ── Populate dashboard ───────────────────────────────────────────
-function populate(d){
-  set('m-loans',d.loansSanctioned||'—');
-  set('m-amount',fmtC(d.amountSanctioned));
-  set('m-repay',fmtC(d.loanRepayment));
-  set('m-default',d.defaulterRepayment||'—');
-
-  killChart('lt');
-  const lt=d.loanTrend||{};
-  if((lt.months||[]).length){
-    CHARTS['lt']=new Chart($('ch-loan-trend'),{type:'line',data:{labels:lt.months,datasets:[
-      {label:'Loan Demand',data:lt.loanDemand,borderColor:'#4f8ef7',backgroundColor:'rgba(79,142,247,0.1)',tension:.4,pointRadius:3},
-      {label:'Loan Received',data:lt.loanReceived,borderColor:'#34d399',backgroundColor:'rgba(52,211,153,0.1)',tension:.4,pointRadius:3}
-    ]},options:{...CO}});
-  }
-  killChart('fd');
-  const fb=d.fundBreakdown||{};
-  const fdV=[fb.CIF||0,fb.VGF||0,fb.PMFME||0,fb.MKSP||0,fb.SVEP||0];
-  if(fdV.some(v=>v>0)){CHARTS['fd']=new Chart($('ch-fund'),{type:'doughnut',data:{labels:['CIF','VGF','PMFME','MKSP','SVEP'],datasets:[{data:fdV,backgroundColor:['#4f8ef7','#34d399','#fbbf24','#a78bfa','#2dd4bf'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#8892a4',font:{size:10},boxWidth:10}}}}});}
-  killChart('bc');
-  const bc=d.blockCompare||{};
-  if((bc.blocks||[]).length){CHARTS['bc']=new Chart($('ch-block'),{type:'bar',data:{labels:bc.blocks,datasets:[{label:'Idle Fund',data:bc.idleFund,backgroundColor:'rgba(79,142,247,0.7)'},{label:'Loan Outstanding',data:bc.loanOutstanding,backgroundColor:'rgba(52,211,153,0.7)'},{label:'NPA SHGs',data:bc.npaSHGs,backgroundColor:'rgba(248,113,113,0.7)'}]},options:{...CO}});}
-
-  set('m-shgs',d.totalSHGs);set('m-aadhaar','Aadhaar covered: '+(d.aadhaarCovered||'—'));
-  set('m-lokos-shg',d.lokosSHGs);set('m-lokos-shg-txn','Transactions: '+(d.lokosShgTxn||'—'));
-  set('m-lokos-vo',d.lokosVOs);set('m-lokos-vo-txn','Transactions: '+(d.lokosVoTxn||'—'));
-  set('m-cadres',d.cadresLokos);set('m-vo-bank','VOs with Bank A/C: '+(d.voBankAc||'—'));
-  const mx=Math.max(d.trainingCLF||0,d.trainingVO||0,d.trainingSHG||0,d.trainingCadre||0,1);
-  setProgress('pb-clf','pv-clf',d.trainingCLF,mx);setProgress('pb-vo','pv-vo',d.trainingVO,mx);
-  setProgress('pb-shg','pv-shg',d.trainingSHG,mx);setProgress('pb-cadre','pv-cadre',d.trainingCadre,mx);
-  set('c-bank',d.bankSakhi);set('c-krishi',d.krishiSakhi);set('c-pashu',d.pashuSakhi);
-  set('c-mbk',d.mbkAwMcp);set('c-crp',d.crpEpIcrpAcrp);set('c-fl',d.financialLiteracy);
-
-  set('g-sa',d.shgGradeA);set('g-sb',d.shgGradeB);set('g-sc',d.shgGradeC);set('g-sd',d.shgGradeD);
-  set('g-va',d.voGradeA);set('g-vb',d.voGradeB);set('g-vc',d.voGradeC);set('g-vd',d.voGradeD);
-  set('m-audit-shg',d.auditSHG);set('m-audit-vo',d.auditVO);set('m-mcp',d.mcpCompleted);set('m-subcomm',d.subCommittees);
-  killChart('fnhw');
-  const fn=d.fnhw||{};
-  if((fn.labels||[]).length){CHARTS['fnhw']=new Chart($('ch-fnhw'),{type:'bar',data:{labels:fn.labels,datasets:[{data:fn.values,backgroundColor:['#4f8ef7','#34d399','#fbbf24','#a78bfa','#2dd4bf'],borderRadius:4}]},options:{...CO,plugins:{legend:{display:false}}}});}
-
-  set('fi-pmjjby',d.pmjjby);set('fi-pmsby',d.pmsby);set('fi-mhis',d.mhis);set('fi-apy',d.apy);
-  set('m-bank-shg',d.bankLoanSHGs);set('m-flc',d.flcSessions);
-
-  set('m-lakh-t',d.lakhpatiTarget);set('m-lakh-a',d.lakhpatiAchieved);set('m-pg',d.producerGroups);
-  set('m-mks','Formed · MKs mobilised: '+(d.mksMobilised||'—'));
-  set('m-nf',(d.naturalFarmingArea||'—')+' ac');set('m-nf-vil','Villages: '+(d.naturalFarmingVillages||'—'));
-  const mi=Math.max(d.intFarm||0,d.intLivestock||0,d.intOrganic||0,d.intNutri||0,1);
-  setProgress('pb-farm','pv-farm',d.intFarm,mi);setProgress('pb-ls','pv-ls',d.intLivestock,mi);
-  setProgress('pb-org','pv-org',d.intOrganic,mi);setProgress('pb-nutri','pv-nutri',d.intNutri,mi);
-  killChart('ll');
-  const ll=d.livelihoodLoans||{};
-  const llV=[ll.agriCIF||0,ll.agriBank||0,ll.livestockCIF||0,ll.livestockBank||0];
-  if(llV.some(v=>v>0)){CHARTS['ll']=new Chart($('ch-liv-loans'),{type:'bar',data:{labels:['Agri-CIF','Agri-Bank','LS-CIF','LS-Bank'],datasets:[{data:llV,backgroundColor:['#34d399','#4f8ef7','#2dd4bf','#a78bfa'],borderRadius:4}]},options:{...CO,plugins:{legend:{display:false}}}});}
-  set('ifc-vil',d.ifcVillages);set('ifc-farm',d.ifcFarmers);set('ifc-area',d.ifcArea);set('ifc-funds',fmtC(d.ifcPGFunds));
-
-  set('m-pmfme',d.pmfmeBeneficiaries);set('m-pmfme-sub','Applications: '+(d.pmfmeApplications||'—')+' · Amount: '+fmtC(d.pmfmeAmount));
-  set('m-mudra',d.mudraLoans);set('m-mudra-sub','Amount: '+fmtC(d.mudraAmount));
-  set('m-pmegp',d.pmegp);set('m-pmegp-sub','Amount: '+fmtC(d.pmegpAmount));
-  set('m-ent',d.totalEnterprises);set('m-ent-sub','Individual: '+(d.indEnterprises||'—')+' · Group: '+(d.grpEnterprises||'—'));
-  set('er-fssai',d.fssai);set('er-uam',d.uam);set('er-gst',d.gst);
-  set('sp-total',fmtC(d.totalSales));set('sp-tcpc',fmtC(d.tcpcSales));set('sp-events',d.events);
-  set('pld-nf',d.pldNonFarm);set('pld-fi',d.pldFinancialLinked);
-  set('inc-lt1',d.incLt1L);set('inc-gt1',d.incGt1L);set('inc-2-3',d.inc2to3L);set('inc-3-5',d.inc3to5L);
-
-  const tb=$('loan-table'),rows=d.loanLinkage||[];
-  tb.innerHTML=rows.length?rows.map(r=>`<tr><td>${r.category||'—'}</td><td>${r.indNo||'—'}</td><td>${fmtC(r.indAmt)}</td><td>${r.indDose||'—'}</td><td>${r.grpNo||'—'}</td><td>${fmtC(r.grpAmt)}</td><td>${r.grpDose||'—'}</td></tr>`).join(''):'<tr><td colspan="7" class="empty-note">No loan data yet</td></tr>';
-  set('last-updated',d.lastUpdated?'Last updated: '+d.lastUpdated:'All sections auto-populate on data submission');
-}
-
-// ── JSONP loader — no CORS issues on any host ────────────────────
-function loadDashboardData(month){
-  setBanner('loading','Connecting to Google Sheets…');
-  const old=document.getElementById('_jsonp');
-  if(old)old.remove();
-  window.__clf_cb=function(data){
-    try{
-      if(data.error)throw new Error(data.error);
-      if(data.noData){setBanner('loading','Connected — no data for '+(month||'any month'));return;}
-      populate(data);
-      setBanner('success','✓ Data loaded successfully from Google Sheets.');
-    }catch(e){
-      setBanner('error','✗ '+e.message);
-      console.error('CLF Dashboard:',e);
-    }
-  };
-  let url=SCRIPT_URL+'?callback=__clf_cb';
-  if(month&&month!=='All')url+='&month='+encodeURIComponent(month);
-  url+='&t='+Date.now();
-  const s=document.createElement('script');
-  s.id='_jsonp';s.src=url;
-  s.onerror=function(){setBanner('error','✗ Cannot reach Apps Script — redeploy with "Anyone" access and verify the URL is correct.');};
-  document.body.appendChild(s);
-}
-
-// ── Filter ───────────────────────────────────────────────────────
-function applyFilter(el,month){
-  document.querySelectorAll('.filter-bar .filter-pill').forEach(p=>p.classList.remove('active'));
-  el.classList.add('active');
-  loadDashboardData(month);
-}
-
-// ── Init ─────────────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded',()=>loadDashboardData('All'));
-</script>
-</body>
-</html>
+/
