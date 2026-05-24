@@ -2,22 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CLF Performance Dashboard</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-:root {
-  --dash-bg:#0f1117; --dash-surface:#181c27; --dash-card:#1e2335;
-  --dash-border:rgba(255,255,255,0.07); --dash-border-strong:rgba(255,255,255,0.13);
-  --dash-text:#e8eaf0; --dash-muted:#8892a4; --dash-accent:#4f8ef7;
-  --dash-green:#34d399; --dash-amber:#fbbf24; --dash-red:#f87171;
-  --dash-teal:#2dd4bf; --dash-purple:#a78bfa; --dash-pink:#f472b6;
+:root{
+  --dash-bg:#0f1117;--dash-surface:#181c27;--dash-card:#1e2335;
+  --dash-border:rgba(255,255,255,0.07);--dash-border-strong:rgba(255,255,255,0.13);
+  --dash-text:#e8eaf0;--dash-muted:#8892a4;--dash-accent:#4f8ef7;
+  --dash-green:#34d399;--dash-amber:#fbbf24;--dash-red:#f87171;
+  --dash-teal:#2dd4bf;--dash-purple:#a78bfa;--dash-pink:#f472b6;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--dash-bg);color:var(--dash-text);font-family:'Trebuchet MS',sans-serif;font-size:13px}
 .dash-wrap{padding:0 0 2rem;min-height:100vh}
-/* Topbar */
-.topbar{background:var(--dash-surface);border-bottom:1px solid var(--dash-border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.topbar{background:var(--dash-surface);border-bottom:1px solid var(--dash-border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
 .topbar-left{display:flex;align-items:center;gap:12px}
 .logo-dot{width:10px;height:10px;border-radius:50%;background:var(--dash-accent);box-shadow:0 0 8px var(--dash-accent)}
 .topbar-title{font-size:15px;font-weight:600;letter-spacing:.02em}
@@ -27,39 +26,32 @@ body{background:var(--dash-bg);color:var(--dash-text);font-family:'Trebuchet MS'
 .badge-blue{background:rgba(79,142,247,.15);color:var(--dash-accent);border:1px solid rgba(79,142,247,.3)}
 .badge-green{background:rgba(52,211,153,.12);color:var(--dash-green);border:1px solid rgba(52,211,153,.25)}
 .badge-red{background:rgba(248,113,113,.12);color:var(--dash-red);border:1px solid rgba(248,113,113,.25)}
-/* Filter bar */
 .filter-bar{background:var(--dash-surface);border-bottom:1px solid var(--dash-border);padding:10px 24px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .filter-label{font-size:11px;color:var(--dash-muted);text-transform:uppercase;letter-spacing:.08em;margin-right:4px}
 .filter-pill{background:var(--dash-card);border:1px solid var(--dash-border-strong);border-radius:20px;padding:4px 14px;font-size:12px;color:var(--dash-muted);cursor:pointer;transition:all .15s}
 .filter-pill.active{background:rgba(79,142,247,.18);border-color:var(--dash-accent);color:var(--dash-accent)}
 .filter-pill:hover{color:var(--dash-text)}
-/* Main */
+.section-label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--dash-muted);margin-bottom:10px;padding-left:2px;display:flex;align-items:center;gap:8px}
+.section-label::after{content:'';flex:1;height:1px;background:var(--dash-border)}
+.section-divider{margin:4px 0}
 .main{padding:20px 24px;display:flex;flex-direction:column;gap:20px}
 .grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-/* Cards */
 .card{background:var(--dash-card);border:1px solid var(--dash-border);border-radius:10px;padding:16px}
 .metric-card{background:var(--dash-card);border:1px solid var(--dash-border);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden}
-.metric-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent-color,var(--dash-accent))}
+.metric-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--ac,var(--dash-accent))}
 .metric-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--dash-muted);margin-bottom:6px}
 .metric-val{font-size:26px;font-weight:700;color:var(--dash-text);line-height:1;font-variant-numeric:tabular-nums}
 .metric-sub{font-size:11px;color:var(--dash-muted);margin-top:6px}
-/* Section */
-.section-label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--dash-muted);margin-bottom:10px;padding-left:2px;display:flex;align-items:center;gap:8px}
-.section-label::after{content:'';flex:1;height:1px;background:var(--dash-border)}
-.section-divider{margin:4px 0}
-/* Chart */
 .chart-title{font-size:12px;font-weight:600;color:var(--dash-text);margin-bottom:4px}
 .chart-sub{font-size:11px;color:var(--dash-muted);margin-bottom:14px}
 .chart-wrap{position:relative}
-/* Progress */
 .progress-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .progress-label{font-size:11px;color:var(--dash-muted);width:130px;flex-shrink:0}
 .progress-bar-bg{flex:1;height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
 .progress-bar-fill{height:100%;border-radius:3px;transition:width .8s ease}
 .progress-val{font-size:11px;color:var(--dash-text);width:40px;text-align:right}
-/* Grade */
 .grade-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
 .grade-box{border-radius:8px;padding:10px 8px;text-align:center}
 .grade-a{background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.2)}
@@ -69,22 +61,19 @@ body{background:var(--dash-bg);color:var(--dash-text);font-family:'Trebuchet MS'
 .grade-letter{font-size:20px;font-weight:700}
 .grade-count{font-size:22px;font-weight:700;margin-top:2px}
 .grade-lbl{font-size:10px;margin-top:2px;text-transform:uppercase;letter-spacing:.06em}
-.grade-a .grade-letter,.grade-a .grade-count{color:var(--dash-green)} .grade-a .grade-lbl{color:rgba(52,211,153,.6)}
-.grade-b .grade-letter,.grade-b .grade-count{color:var(--dash-accent)} .grade-b .grade-lbl{color:rgba(79,142,247,.6)}
-.grade-c .grade-letter,.grade-c .grade-count{color:var(--dash-amber)} .grade-c .grade-lbl{color:rgba(251,191,36,.6)}
-.grade-d .grade-letter,.grade-d .grade-count{color:var(--dash-red)} .grade-d .grade-lbl{color:rgba(248,113,113,.6)}
-/* Cadre */
+.grade-a .grade-letter,.grade-a .grade-count{color:var(--dash-green)}.grade-a .grade-lbl{color:rgba(52,211,153,.6)}
+.grade-b .grade-letter,.grade-b .grade-count{color:var(--dash-accent)}.grade-b .grade-lbl{color:rgba(79,142,247,.6)}
+.grade-c .grade-letter,.grade-c .grade-count{color:var(--dash-amber)}.grade-c .grade-lbl{color:rgba(251,191,36,.6)}
+.grade-d .grade-letter,.grade-d .grade-count{color:var(--dash-red)}.grade-d .grade-lbl{color:rgba(248,113,113,.6)}
 .cadre-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--dash-border)}
 .cadre-row:last-child{border-bottom:none}
 .cadre-name{font-size:11px;color:var(--dash-muted);display:flex;align-items:center;gap:6px}
 .cadre-val{font-size:13px;font-weight:600;color:var(--dash-text)}
 .cadre-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-/* Insurance */
 .ins-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--dash-border)}
 .ins-row:last-child{border-bottom:none}
 .ins-label{font-size:11px;color:var(--dash-muted)}
 .ins-val{font-size:13px;font-weight:600;color:var(--dash-text)}
-/* Table */
 .table-wrap{overflow-x:auto}
 table.data-table{width:100%;border-collapse:collapse;font-size:11px}
 table.data-table th{color:var(--dash-muted);font-weight:600;text-transform:uppercase;letter-spacing:.07em;padding:6px 10px;border-bottom:1px solid var(--dash-border-strong);text-align:left}
@@ -92,20 +81,17 @@ table.data-table td{padding:8px 10px;border-bottom:1px solid var(--dash-border);
 table.data-table tr:last-child td{border-bottom:none}
 table.data-table tr:hover td{background:rgba(255,255,255,.02)}
 .empty-note{text-align:center;padding:20px 0;color:var(--dash-muted);font-size:11px}
-/* Stat mini */
 .stat-mini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
 .stat-mini{background:rgba(255,255,255,.03);border-radius:8px;padding:10px;text-align:center}
 .stat-mini-label{font-size:10px;color:var(--dash-muted);margin-bottom:4px}
 .stat-mini-val{font-size:20px;font-weight:700;color:var(--dash-text)}
-/* Live chip */
 .live-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.2);border-radius:20px;padding:3px 10px;font-size:10px;color:var(--dash-green)}
 .live-dot{width:6px;height:6px;border-radius:50%;background:var(--dash-green);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-/* Status banner */
 .status-banner{border-radius:8px;padding:10px 16px;font-size:11px;display:flex;align-items:center;gap:10px}
-.banner-loading{background:rgba(79,142,247,.07);border:1px dashed rgba(79,142,247,.3);color:rgba(79,142,247,.8)}
-.banner-success{background:rgba(52,211,153,.07);border:1px dashed rgba(52,211,153,.3);color:rgba(52,211,153,.9)}
-.banner-error{background:rgba(248,113,113,.07);border:1px dashed rgba(248,113,113,.3);color:rgba(248,113,113,.9)}
+.sb-loading{background:rgba(79,142,247,.07);border:1px dashed rgba(79,142,247,.3);color:rgba(79,142,247,.8)}
+.sb-success{background:rgba(52,211,153,.07);border:1px dashed rgba(52,211,153,.3);color:rgba(52,211,153,.9)}
+.sb-error{background:rgba(248,113,113,.07);border:1px dashed rgba(248,113,113,.3);color:rgba(248,113,113,.9)}
 .spinner{width:14px;height:14px;border:2px solid rgba(79,142,247,.3);border-top-color:var(--dash-accent);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
 </style>
@@ -113,581 +99,339 @@ table.data-table tr:hover td{background:rgba(255,255,255,.02)}
 <body>
 <div class="dash-wrap">
 
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <div class="topbar-left">
-      <div class="logo-dot"></div>
-      <div>
-        <div class="topbar-title">CLF Performance Dashboard</div>
-        <div class="topbar-sub">Cluster Level Federation · Consolidated View</div>
-      </div>
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo-dot"></div>
+    <div>
+      <div class="topbar-title">CLF Performance Dashboard</div>
+      <div class="topbar-sub">Cluster Level Federation · Consolidated View</div>
     </div>
-    <div class="topbar-badges">
-      <span class="live-chip"><span class="live-dot"></span>Live Data</span>
-      <span class="badge badge-blue" id="badge-status">Loading…</span>
+  </div>
+  <div class="topbar-badges">
+    <span class="live-chip"><span class="live-dot"></span>Live Data</span>
+    <span class="badge badge-blue" id="badge-status">Loading…</span>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <span class="filter-label">Month</span>
+  <span class="filter-pill active" onclick="applyFilter(this,'All')">All</span>
+  <span class="filter-pill" onclick="applyFilter(this,'Jan')">Jan</span>
+  <span class="filter-pill" onclick="applyFilter(this,'Feb')">Feb</span>
+  <span class="filter-pill" onclick="applyFilter(this,'Mar')">Mar</span>
+  <span class="filter-pill" onclick="applyFilter(this,'Apr')">Apr</span>
+  <span class="filter-pill" onclick="applyFilter(this,'May')">May</span>
+  <span class="filter-pill" onclick="applyFilter(this,'Jun')">Jun</span>
+  <span class="filter-pill" onclick="applyFilter(this,'Jul')">Jul</span>
+  <span class="filter-pill" onclick="applyFilter(this,'Aug')">Aug</span>
+  <span class="filter-pill" onclick="applyFilter(this,'Sep')">Sep</span>
+  <span class="filter-pill" onclick="applyFilter(this,'Oct')">Oct</span>
+  <span class="filter-pill" onclick="applyFilter(this,'Nov')">Nov</span>
+  <span class="filter-pill" onclick="applyFilter(this,'Dec')">Dec</span>
+  <span style="margin-left:auto;display:flex;gap:8px;align-items:center">
+    <span class="filter-label">Block</span><span class="filter-pill active">All Blocks</span>
+    <span class="filter-label" style="margin-left:8px">CLF</span><span class="filter-pill active">All CLFs</span>
+  </span>
+</div>
+
+<div class="main">
+  <div class="status-banner sb-loading" id="status-banner">
+    <div class="spinner" id="spinner"></div>
+    <span id="status-text">Connecting to Google Sheets…</span>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section-divider">
+    <div class="section-label">1 · Financial Report</div>
+    <div class="grid4">
+      <div class="metric-card" style="--ac:#4f8ef7"><div class="metric-label">Loans Sanctioned</div><div class="metric-val" id="m-loans">—</div><div class="metric-sub" id="m-loans-sub">Awaiting data</div></div>
+      <div class="metric-card" style="--ac:#34d399"><div class="metric-label">Amount Sanctioned (₹)</div><div class="metric-val" id="m-amount">—</div><div class="metric-sub">Awaiting data</div></div>
+      <div class="metric-card" style="--ac:#fbbf24"><div class="metric-label">Loan Repayment (₹)</div><div class="metric-val" id="m-repay">—</div><div class="metric-sub">Awaiting data</div></div>
+      <div class="metric-card" style="--ac:#f87171"><div class="metric-label">Defaulter Repayment</div><div class="metric-val" id="m-default">—</div><div class="metric-sub">Awaiting data</div></div>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div class="card"><div class="chart-title">Loan Demand vs. Received (CIF)</div><div class="chart-sub">Monthly trend</div><div class="chart-wrap" style="height:160px"><canvas id="ch-loan-trend" role="img" aria-label="Loan trend">Loan trend</canvas></div></div>
+      <div class="card"><div class="chart-title">Fund Breakdown</div><div class="chart-sub">CIF · VGF · PMFME · MKSP · SVEP</div><div class="chart-wrap" style="height:160px"><canvas id="ch-fund" role="img" aria-label="Fund breakdown">Fund breakdown</canvas></div></div>
+    </div>
+    <div class="card" style="margin-top:12px"><div class="chart-title">Idle Fund · Loan Outstanding · NPA SHGs</div><div class="chart-sub">Block-wise comparison</div><div class="chart-wrap" style="height:160px"><canvas id="ch-block" role="img" aria-label="Block comparison">Block data</canvas></div></div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section-divider">
+    <div class="section-label">2 · M&amp;E Report</div>
+    <div class="grid4">
+      <div class="metric-card" style="--ac:#a78bfa"><div class="metric-label">Total SHGs in CLF</div><div class="metric-val" id="m-shgs">—</div><div class="metric-sub" id="m-aadhaar">Aadhaar covered: —</div></div>
+      <div class="metric-card" style="--ac:#2dd4bf"><div class="metric-label">SHGs — LokOS Profiled</div><div class="metric-val" id="m-lokos-shg">—</div><div class="metric-sub" id="m-lokos-shg-txn">Transactions: —</div></div>
+      <div class="metric-card" style="--ac:#4f8ef7"><div class="metric-label">VOs — LokOS Profiled</div><div class="metric-val" id="m-lokos-vo">—</div><div class="metric-sub" id="m-lokos-vo-txn">Transactions: —</div></div>
+      <div class="metric-card" style="--ac:#34d399"><div class="metric-label">Cadres in LokOS</div><div class="metric-val" id="m-cadres">—</div><div class="metric-sub" id="m-vo-bank">VOs with Bank A/C: —</div></div>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div class="card">
+        <div class="chart-title">Training Coverage</div><div class="chart-sub">CLF / VO / SHG / Cadres</div>
+        <div style="margin-top:8px">
+          <div class="progress-row"><span class="progress-label">CLF</span><div class="progress-bar-bg"><div class="progress-bar-fill" id="pb-clf" style="width:0%;background:var(--dash-accent)"></div></div><span class="progress-val" id="pv-clf">—</span></div>
+          <div class="progress-row"><span class="progress-label">Village Organisation</span><div class="progress-bar-bg"><div class="progress-bar-fill" id="pb-vo" style="width:0%;background:var(--dash-purple)"></div></div><span class="progress-val" id="pv-vo">—</span></div>
+          <div class="progress-row"><span class="progress-label">SHG</span><div class="progress-bar-bg"><div class="progress-bar-fill" id="pb-shg" style="width:0%;background:var(--dash-teal)"></div></div><span class="progress-val" id="pv-shg">—</span></div>
+          <div class="progress-row"><span class="progress-label">Cadres</span><div class="progress-bar-bg"><div class="progress-bar-fill" id="pb-cadre" style="width:0%;background:var(--dash-green)"></div></div><span class="progress-val" id="pv-cadre">—</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="chart-title">Cadre Roster</div><div class="chart-sub">Registered cadres by type</div>
+        <div class="cadre-row"><span class="cadre-name"><span class="cadre-dot" style="background:var(--dash-accent)"></span>Bank Sakhi</span><span class="cadre-val" id="c-bank">—</span></div>
+        <div class="cadre-row"><span class="cadre-name"><span class="cadre-dot" style="background:var(--dash-green)"></span>Krishi Sakhi</span><span class="cadre-val" id="c-krishi">—</span></div>
+        <div class="cadre-row"><span class="cadre-name"><span class="cadre-dot" style="background:var(--dash-teal)"></span>Pashu Sakhi</span><span class="cadre-val" id="c-pashu">—</span></div>
+        <div class="cadre-row"><span class="cadre-name"><span class="cadre-dot" style="background:var(--dash-amber)"></span>MBK / AW / MCP</span><span class="cadre-val" id="c-mbk">—</span></div>
+        <div class="cadre-row"><span class="cadre-name"><span class="cadre-dot" style="background:var(--dash-purple)"></span>CRP-EP / ICRP / ACRP</span><span class="cadre-val" id="c-crp">—</span></div>
+        <div class="cadre-row"><span class="cadre-name"><span class="cadre-dot" style="background:var(--dash-pink)"></span>Financial Literacy</span><span class="cadre-val" id="c-fl">—</span></div>
+      </div>
     </div>
   </div>
 
-  <!-- FILTER BAR -->
-  <div class="filter-bar">
-    <span class="filter-label">Month</span>
-    <span class="filter-pill active" onclick="applyFilter(this,'All')">All</span>
-    <span class="filter-pill" onclick="applyFilter(this,'Jan')">Jan</span>
-    <span class="filter-pill" onclick="applyFilter(this,'Feb')">Feb</span>
-    <span class="filter-pill" onclick="applyFilter(this,'Mar')">Mar</span>
-    <span class="filter-pill" onclick="applyFilter(this,'Apr')">Apr</span>
-    <span class="filter-pill" onclick="applyFilter(this,'May')">May</span>
-    <span class="filter-pill" onclick="applyFilter(this,'Jun')">Jun</span>
-    <span style="margin-left:auto;display:flex;gap:8px;align-items:center">
-      <span class="filter-label">Block</span>
-      <span class="filter-pill active">All Blocks</span>
-      <span class="filter-label" style="margin-left:8px">CLF</span>
-      <span class="filter-pill active">All CLFs</span>
-    </span>
+  <!-- SECTION 3 -->
+  <div class="section-divider">
+    <div class="section-label">3 · IBCB Report</div>
+    <div class="grid2">
+      <div class="card"><div class="chart-title">SHG Grading</div><div class="chart-sub">Distribution across grades</div>
+        <div class="grade-grid"><div class="grade-box grade-a"><div class="grade-letter">A</div><div class="grade-count" id="g-sa">—</div><div class="grade-lbl">SHGs</div></div><div class="grade-box grade-b"><div class="grade-letter">B</div><div class="grade-count" id="g-sb">—</div><div class="grade-lbl">SHGs</div></div><div class="grade-box grade-c"><div class="grade-letter">C</div><div class="grade-count" id="g-sc">—</div><div class="grade-lbl">SHGs</div></div><div class="grade-box grade-d"><div class="grade-letter">D</div><div class="grade-count" id="g-sd">—</div><div class="grade-lbl">SHGs</div></div></div>
+      </div>
+      <div class="card"><div class="chart-title">VO Grading</div><div class="chart-sub">Distribution across grades</div>
+        <div class="grade-grid"><div class="grade-box grade-a"><div class="grade-letter">A</div><div class="grade-count" id="g-va">—</div><div class="grade-lbl">VOs</div></div><div class="grade-box grade-b"><div class="grade-letter">B</div><div class="grade-count" id="g-vb">—</div><div class="grade-lbl">VOs</div></div><div class="grade-box grade-c"><div class="grade-letter">C</div><div class="grade-count" id="g-vc">—</div><div class="grade-lbl">VOs</div></div><div class="grade-box grade-d"><div class="grade-letter">D</div><div class="grade-count" id="g-vd">—</div><div class="grade-lbl">VOs</div></div></div>
+      </div>
+    </div>
+    <div class="grid4" style="margin-top:12px">
+      <div class="metric-card" style="--ac:#34d399"><div class="metric-label">Annual Audit — SHG</div><div class="metric-val" id="m-audit-shg">—</div><div class="metric-sub">Completed</div></div>
+      <div class="metric-card" style="--ac:#4f8ef7"><div class="metric-label">Annual Audit — VO</div><div class="metric-val" id="m-audit-vo">—</div><div class="metric-sub">Completed</div></div>
+      <div class="metric-card" style="--ac:#a78bfa"><div class="metric-label">MCP Completed</div><div class="metric-val" id="m-mcp">—</div><div class="metric-sub">SHGs</div></div>
+      <div class="metric-card" style="--ac:#2dd4bf"><div class="metric-label">Functional Sub Committees</div><div class="metric-val" id="m-subcomm">—</div><div class="metric-sub">Active</div></div>
+    </div>
+    <div class="card" style="margin-top:12px"><div class="chart-title">FNHW &amp; Community Engagement</div><div class="chart-sub">Follow-up pregnancies · VHND · Gram Sabha · Community events · Transit home</div><div class="chart-wrap" style="height:140px"><canvas id="ch-fnhw" role="img" aria-label="FNHW chart">FNHW data</canvas></div></div>
   </div>
 
-  <div class="main">
-
-    <!-- STATUS BANNER -->
-    <div class="status-banner banner-loading" id="status-banner">
-      <div class="spinner" id="spinner"></div>
-      <span id="status-text">Connecting to Google Sheets… please wait.</span>
+  <!-- SECTION 4&5 -->
+  <div class="section-divider">
+    <div class="section-label">4 &amp; 5 · SISD &amp; Financial Inclusion</div>
+    <div class="grid4">
+      <div class="card"><div class="chart-title" style="font-size:11px">PMJJBY</div><div class="ins-row"><span class="ins-label">Enrolled</span><span class="ins-val" id="fi-pmjjby">—</span></div></div>
+      <div class="card"><div class="chart-title" style="font-size:11px">PMSBY</div><div class="ins-row"><span class="ins-label">Enrolled</span><span class="ins-val" id="fi-pmsby">—</span></div></div>
+      <div class="card"><div class="chart-title" style="font-size:11px">MHIS</div><div class="ins-row"><span class="ins-label">Enrolled</span><span class="ins-val" id="fi-mhis">—</span></div></div>
+      <div class="card"><div class="chart-title" style="font-size:11px">APY</div><div class="ins-row"><span class="ins-label">Enrolled</span><span class="ins-val" id="fi-apy">—</span></div></div>
     </div>
+    <div class="grid2" style="margin-top:12px">
+      <div class="metric-card" style="--ac:#fbbf24"><div class="metric-label">SHGs with Active Bank Loan</div><div class="metric-val" id="m-bank-shg">—</div><div class="metric-sub">Linked to bank</div></div>
+      <div class="metric-card" style="--ac:#34d399"><div class="metric-label">FLC Sessions (Saksham Centre)</div><div class="metric-val" id="m-flc">—</div><div class="metric-sub">Financial literacy conducted</div></div>
+    </div>
+  </div>
 
-    <!-- ── SECTION 1: Financial ─────────────────────────────────── -->
-    <div class="section-divider">
-      <div class="section-label">1 · Financial Report</div>
-      <div class="grid4">
-        <div class="metric-card" style="--accent-color:#4f8ef7">
-          <div class="metric-label">Loans Sanctioned</div>
-          <div class="metric-val" id="m-loans">—</div>
-          <div class="metric-sub" id="m-loans-sub">Awaiting data</div>
-        </div>
-        <div class="metric-card" style="--accent-color:#34d399">
-          <div class="metric-label">Amount Sanctioned (₹)</div>
-          <div class="metric-val" id="m-amount">—</div>
-          <div class="metric-sub" id="m-amount-sub">Awaiting data</div>
-        </div>
-        <div class="metric-card" style="--accent-color:#fbbf24">
-          <div class="metric-label">Loan Repayment (₹)</div>
-          <div class="metric-val" id="m-repay">—</div>
-          <div class="metric-sub" id="m-repay-sub">Awaiting data</div>
-        </div>
-        <div class="metric-card" style="--accent-color:#f87171">
-          <div class="metric-label">Defaulter Repayment</div>
-          <div class="metric-val" id="m-default">—</div>
-          <div class="metric-sub" id="m-default-sub">Awaiting data</div>
+  <!-- SECTION 6 -->
+  <div class="section-divider">
+    <div class="section-label">6 · Livelihoods Report</div>
+    <div class="grid4">
+      <div class="metric-card" style="--ac:#34d399"><div class="metric-label">Lakhpati Didi (Target)</div><div class="metric-val" id="m-lakh-t">—</div><div class="metric-sub">Potential identified</div></div>
+      <div class="metric-card" style="--ac:#4f8ef7"><div class="metric-label">Lakhpati Didi (Achieved)</div><div class="metric-val" id="m-lakh-a">—</div><div class="metric-sub">Income ≥ ₹1L</div></div>
+      <div class="metric-card" style="--ac:#2dd4bf"><div class="metric-label">Producer Groups</div><div class="metric-val" id="m-pg">—</div><div class="metric-sub" id="m-mks">Formed · MKs mobilised: —</div></div>
+      <div class="metric-card" style="--ac:#a78bfa"><div class="metric-label">Natural Farming Area</div><div class="metric-val" id="m-nf">— ac</div><div class="metric-sub" id="m-nf-vil">Villages: —</div></div>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div class="card">
+        <div class="chart-title">Intervention Coverage</div><div class="chart-sub">Villages reached by type</div>
+        <div style="margin-top:8px">
+          <div class="progress-row"><span class="progress-label">Farm Livelihood</span><div class="progress-bar-bg"><div class="progress-bar-fill" id="pb-farm" style="width:0%;background:var(--dash-green)"></div></div><span class="progress-val" id="pv-farm">—</span></div>
+          <div class="progress-row"><span class="progress-label">Livestock</span><div class="progress-bar-bg"><div class="progress-bar-fill" id="pb-ls" style="width:0%;background:var(--dash-teal)"></div></div><span class="progress-val" id="pv-ls">—</span></div>
+          <div class="progress-row"><span class="progress-label">Organic Farming</span><div class="progress-bar-bg"><div class="progress-bar-fill" id="pb-org" style="width:0%;background:var(--dash-amber)"></div></div><span class="progress-val" id="pv-org">—</span></div>
+          <div class="progress-row"><span class="progress-label">Nutri Garden HH</span><div class="progress-bar-bg"><div class="progress-bar-fill" id="pb-nutri" style="width:0%;background:var(--dash-purple)"></div></div><span class="progress-val" id="pv-nutri">—</span></div>
         </div>
       </div>
-      <div class="grid2" style="margin-top:12px">
-        <div class="card">
-          <div class="chart-title">Loan Demand vs. Received (CIF Principal)</div>
-          <div class="chart-sub">Monthly trend across all CLFs</div>
-          <div class="chart-wrap" style="height:160px"><canvas id="ch-loan-trend"></canvas></div>
-        </div>
-        <div class="card">
-          <div class="chart-title">Fund Breakdown</div>
-          <div class="chart-sub">CIF · VGF · PMFME · MKSP · SVEP</div>
-          <div class="chart-wrap" style="height:160px"><canvas id="ch-fund"></canvas></div>
-        </div>
-      </div>
-      <div class="card" style="margin-top:12px">
-        <div class="chart-title">Idle Fund · Loan Outstanding · NPA SHGs</div>
-        <div class="chart-sub">Block-wise comparison</div>
-        <div class="chart-wrap" style="height:160px"><canvas id="ch-block"></canvas></div>
+      <div class="card"><div class="chart-title">Livelihood Loans — CIF &amp; Bank</div><div class="chart-sub">Agri + Livestock linkage</div><div class="chart-wrap" style="height:150px"><canvas id="ch-liv-loans" role="img" aria-label="Livelihood loans">Livelihood loans</canvas></div></div>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="chart-title">IFC Metrics</div><div class="chart-sub">Villages · NF Farmers · Area · PG Funds</div>
+      <div class="stat-mini-grid">
+        <div class="stat-mini"><div class="stat-mini-label">Villages</div><div class="stat-mini-val" id="ifc-vil">—</div></div>
+        <div class="stat-mini"><div class="stat-mini-label">NF Farmers</div><div class="stat-mini-val" id="ifc-farm">—</div></div>
+        <div class="stat-mini"><div class="stat-mini-label">NF Area (ac)</div><div class="stat-mini-val" id="ifc-area">—</div></div>
+        <div class="stat-mini"><div class="stat-mini-label">PG Funds (₹)</div><div class="stat-mini-val" id="ifc-funds">—</div></div>
       </div>
     </div>
+  </div>
 
-    <!-- ── SECTION 2: M&E ──────────────────────────────────────── -->
-    <div class="section-divider">
-      <div class="section-label">2 · M&amp;E Report</div>
-      <div class="grid4">
-        <div class="metric-card" style="--accent-color:#a78bfa">
-          <div class="metric-label">Total SHGs in CLF</div>
-          <div class="metric-val" id="m-shgs">—</div>
-          <div class="metric-sub" id="m-aadhaar">Aadhaar covered: —</div>
-        </div>
-        <div class="metric-card" style="--accent-color:#2dd4bf">
-          <div class="metric-label">SHGs — LokOS Profiled</div>
-          <div class="metric-val" id="m-lokos-shg">—</div>
-          <div class="metric-sub" id="m-lokos-shg-txn">Transactions done: —</div>
-        </div>
-        <div class="metric-card" style="--accent-color:#4f8ef7">
-          <div class="metric-label">VOs — LokOS Profiled</div>
-          <div class="metric-val" id="m-lokos-vo">—</div>
-          <div class="metric-sub" id="m-lokos-vo-txn">Transactions done: —</div>
-        </div>
-        <div class="metric-card" style="--accent-color:#34d399">
-          <div class="metric-label">Cadres in LokOS</div>
-          <div class="metric-val" id="m-cadres">—</div>
-          <div class="metric-sub" id="m-vo-bank">VOs with Bank A/C: —</div>
-        </div>
+  <!-- SECTION 7 -->
+  <div class="section-divider">
+    <div class="section-label">7 · Non-Farm Livelihood</div>
+    <div class="grid4">
+      <div class="metric-card" style="--ac:#f472b6"><div class="metric-label">PMFME Beneficiaries</div><div class="metric-val" id="m-pmfme">—</div><div class="metric-sub" id="m-pmfme-sub">Applications: — · Amount: ₹—</div></div>
+      <div class="metric-card" style="--ac:#fbbf24"><div class="metric-label">Mudra Loans</div><div class="metric-val" id="m-mudra">—</div><div class="metric-sub" id="m-mudra-sub">Amount: ₹—</div></div>
+      <div class="metric-card" style="--ac:#34d399"><div class="metric-label">PMEGP</div><div class="metric-val" id="m-pmegp">—</div><div class="metric-sub" id="m-pmegp-sub">Amount: ₹—</div></div>
+      <div class="metric-card" style="--ac:#2dd4bf"><div class="metric-label">Total Enterprises</div><div class="metric-val" id="m-ent">—</div><div class="metric-sub" id="m-ent-sub">Individual: — · Group: —</div></div>
+    </div>
+    <div class="grid3" style="margin-top:12px">
+      <div class="card"><div class="chart-title">Enterprise Registrations</div><div class="chart-sub">FSSAI · UAM · GST</div>
+        <div class="cadre-row"><span class="cadre-name"><span class="cadre-dot" style="background:var(--dash-accent)"></span>FSSAI</span><span class="cadre-val" id="er-fssai">—</span></div>
+        <div class="cadre-row"><span class="cadre-name"><span class="cadre-dot" style="background:var(--dash-green)"></span>UAM</span><span class="cadre-val" id="er-uam">—</span></div>
+        <div class="cadre-row"><span class="cadre-name"><span class="cadre-dot" style="background:var(--dash-amber)"></span>GST</span><span class="cadre-val" id="er-gst">—</span></div>
       </div>
-      <div class="grid2" style="margin-top:12px">
-        <div class="card">
-          <div class="chart-title">Training Coverage</div>
-          <div class="chart-sub">By level — CLF / VO / SHG / Cadres</div>
-          <div style="margin-top:8px">
-            <div class="progress-row"><span class="progress-label">CLF</span><div class="progress-bar-bg"><div class="progress-bar-fill" id="pb-clf" style="width:0%;background:var(--dash-accent)"></div></div><span class="progress-val" id="pv-clf">—</span></div>
-            <div class="progress-row"><span class="progress-label">Village Organisation</span><div class="progress-bar-bg"><div class="progress-bar-fill" id="pb-vo" style="width:0%;background:var(--dash-purple)"></div></div><span class="progress-val" id="pv-vo">—</span></div>
-            <div class="progress-row"><span class="progress-label">SHG</span><div class="progress-bar-bg"><div class="progress-bar-fill" id="pb-shg" style="width:0%;background:var(--dash-teal)"></div></div><span class="progress-val" id="pv-shg">—</span></div>
-            <div class="progress-row"><span class="progress-label">Cadres</span><div class="progress-bar-bg"><div class="progress-bar-fill" id="pb-cadre" style="width:0%;background:var(--dash-green)"></div></div><span class="progress-val" id="pv-cadre">—</span></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="chart-title">Cadre Roster</div>
-          <div class="chart-sub">Registered cadres by type</div>
-          <div class="cadre-row"><span class="cadre-name"><span class="cadre-dot" style="background:var(--dash-accent)"></span>Bank Sakhi</span><span class="cadre-val" id="c-bank">—</span></div>
-          <div class="cadre-row"><span class="cadre-name"><span class="cadre-dot" style="background:var(--dash-green)"></span>Krishi Sakhi</span><span class="cadre-val" id="c-krishi">—</span></div>
-          <div class="cadre-row"><span class="cadre-name"><span class="cadre-dot" style="background:var(--dash-teal)"></span>Pashu Sakhi</span><span class="cadre-val" id="c-pashu">—</span></div>
-          <div class="cadre-row"><span class="cadre-name"><span class="cadre-dot" style="background:var(--dash-amber)"></span>MBK / AW / MCP</span><span class="cadre-val" id="c-mbk">—</span></div>
-          <div class="cadre-row"><span class="cadre-name"><span class="cadre-dot" style="background:var(--dash-purple)"></span>CRP-EP / ICRP / ACRP</span><span class="cadre-val" id="c-crp">—</span></div>
-          <div class="cadre-row"><span class="cadre-name"><span class="cadre-dot" style="background:var(--dash-pink)"></span>Financial Literacy</span><span class="cadre-val" id="c-fl">—</span></div>
-        </div>
+      <div class="card"><div class="chart-title">Sales Performance</div><div class="chart-sub">Total sales · TCPC sales</div>
+        <div class="cadre-row"><span class="cadre-name">Total Sales (₹)</span><span class="cadre-val" id="sp-total">—</span></div>
+        <div class="cadre-row"><span class="cadre-name">TCPC Sales (₹)</span><span class="cadre-val" id="sp-tcpc">—</span></div>
+        <div class="cadre-row"><span class="cadre-name">Events / Fairs / Melas</span><span class="cadre-val" id="sp-events">—</span></div>
+      </div>
+      <div class="card"><div class="chart-title">PLD Income Distribution</div><div class="chart-sub">Non-farm · Financial linked · By slab</div>
+        <div class="cadre-row"><span class="cadre-name">PLD Non-Farm</span><span class="cadre-val" id="pld-nf">—</span></div>
+        <div class="cadre-row"><span class="cadre-name">PLD Financial Linked</span><span class="cadre-val" id="pld-fi">—</span></div>
+        <div class="cadre-row"><span class="cadre-name">Income &lt;₹1L</span><span class="cadre-val" id="inc-lt1">—</span></div>
+        <div class="cadre-row"><span class="cadre-name">Income &gt;₹1L</span><span class="cadre-val" id="inc-gt1">—</span></div>
+        <div class="cadre-row"><span class="cadre-name">Income ₹2–3L</span><span class="cadre-val" id="inc-2-3">—</span></div>
+        <div class="cadre-row"><span class="cadre-name">Income ₹3–5L+</span><span class="cadre-val" id="inc-3-5">—</span></div>
       </div>
     </div>
-
-    <!-- ── SECTION 3: IBCB ─────────────────────────────────────── -->
-    <div class="section-divider">
-      <div class="section-label">3 · IBCB Report</div>
-      <div class="grid2">
-        <div class="card">
-          <div class="chart-title">SHG Grading</div>
-          <div class="chart-sub">Distribution across grades</div>
-          <div class="grade-grid">
-            <div class="grade-box grade-a"><div class="grade-letter">A</div><div class="grade-count" id="g-sa">—</div><div class="grade-lbl">SHGs</div></div>
-            <div class="grade-box grade-b"><div class="grade-letter">B</div><div class="grade-count" id="g-sb">—</div><div class="grade-lbl">SHGs</div></div>
-            <div class="grade-box grade-c"><div class="grade-letter">C</div><div class="grade-count" id="g-sc">—</div><div class="grade-lbl">SHGs</div></div>
-            <div class="grade-box grade-d"><div class="grade-letter">D</div><div class="grade-count" id="g-sd">—</div><div class="grade-lbl">SHGs</div></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="chart-title">VO Grading</div>
-          <div class="chart-sub">Distribution across grades</div>
-          <div class="grade-grid">
-            <div class="grade-box grade-a"><div class="grade-letter">A</div><div class="grade-count" id="g-va">—</div><div class="grade-lbl">VOs</div></div>
-            <div class="grade-box grade-b"><div class="grade-letter">B</div><div class="grade-count" id="g-vb">—</div><div class="grade-lbl">VOs</div></div>
-            <div class="grade-box grade-c"><div class="grade-letter">C</div><div class="grade-count" id="g-vc">—</div><div class="grade-lbl">VOs</div></div>
-            <div class="grade-box grade-d"><div class="grade-letter">D</div><div class="grade-count" id="g-vd">—</div><div class="grade-lbl">VOs</div></div>
-          </div>
-        </div>
-      </div>
-      <div class="grid4" style="margin-top:12px">
-        <div class="metric-card" style="--accent-color:#34d399"><div class="metric-label">Annual Audit — SHG</div><div class="metric-val" id="m-audit-shg">—</div><div class="metric-sub">Completed</div></div>
-        <div class="metric-card" style="--accent-color:#4f8ef7"><div class="metric-label">Annual Audit — VO</div><div class="metric-val" id="m-audit-vo">—</div><div class="metric-sub">Completed</div></div>
-        <div class="metric-card" style="--accent-color:#a78bfa"><div class="metric-label">MCP Completed</div><div class="metric-val" id="m-mcp">—</div><div class="metric-sub">SHGs</div></div>
-        <div class="metric-card" style="--accent-color:#2dd4bf"><div class="metric-label">Functional Sub Committees</div><div class="metric-val" id="m-subcomm">—</div><div class="metric-sub">Active</div></div>
-      </div>
-      <div class="card" style="margin-top:12px">
-        <div class="chart-title">FNHW &amp; Community Engagement</div>
-        <div class="chart-sub">Follow-up pregnancies · VHND · Gram Sabha · Community events · Transit home</div>
-        <div class="chart-wrap" style="height:140px"><canvas id="ch-fnhw"></canvas></div>
+    <div class="card" style="margin-top:12px">
+      <div class="chart-title">Non-Farm Loan Linkage Overview</div><div class="chart-sub">Individual &amp; Group · CIF and Bank</div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Category</th><th>Ind — No.</th><th>Ind — Amt (₹)</th><th>Ind — Dose</th><th>Grp — No.</th><th>Grp — Amt (₹)</th><th>Grp — Dose</th></tr></thead>
+          <tbody id="loan-table"><tr><td colspan="7" class="empty-note">Loading…</td></tr></tbody>
+        </table>
       </div>
     </div>
+  </div>
 
-    <!-- ── SECTION 4&5: SISD & Financial Inclusion ─────────────── -->
-    <div class="section-divider">
-      <div class="section-label">4 &amp; 5 · SISD &amp; Financial Inclusion</div>
-      <div class="grid4">
-        <div class="card"><div class="chart-title" style="font-size:11px">PMJJBY</div><div class="ins-row"><span class="ins-label">Enrolled</span><span class="ins-val" id="fi-pmjjby">—</span></div></div>
-        <div class="card"><div class="chart-title" style="font-size:11px">PMSBY</div><div class="ins-row"><span class="ins-label">Enrolled</span><span class="ins-val" id="fi-pmsby">—</span></div></div>
-        <div class="card"><div class="chart-title" style="font-size:11px">MHIS</div><div class="ins-row"><span class="ins-label">Enrolled</span><span class="ins-val" id="fi-mhis">—</span></div></div>
-        <div class="card"><div class="chart-title" style="font-size:11px">APY</div><div class="ins-row"><span class="ins-label">Enrolled</span><span class="ins-val" id="fi-apy">—</span></div></div>
-      </div>
-      <div class="grid2" style="margin-top:12px">
-        <div class="metric-card" style="--accent-color:#fbbf24"><div class="metric-label">SHGs with Active Bank Loan</div><div class="metric-val" id="m-bank-shg">—</div><div class="metric-sub">Linked to bank</div></div>
-        <div class="metric-card" style="--accent-color:#34d399"><div class="metric-label">FLC Sessions (Saksham Centre)</div><div class="metric-val" id="m-flc">—</div><div class="metric-sub">Financial literacy conducted</div></div>
-      </div>
-    </div>
-
-    <!-- ── SECTION 6: Livelihoods ──────────────────────────────── -->
-    <div class="section-divider">
-      <div class="section-label">6 · Livelihoods Report</div>
-      <div class="grid4">
-        <div class="metric-card" style="--accent-color:#34d399"><div class="metric-label">Lakhpati Didi (Target)</div><div class="metric-val" id="m-lakh-t">—</div><div class="metric-sub">Potential identified</div></div>
-        <div class="metric-card" style="--accent-color:#4f8ef7"><div class="metric-label">Lakhpati Didi (Achieved)</div><div class="metric-val" id="m-lakh-a">—</div><div class="metric-sub">Income ≥ ₹1L</div></div>
-        <div class="metric-card" style="--accent-color:#2dd4bf"><div class="metric-label">Producer Groups</div><div class="metric-val" id="m-pg">—</div><div class="metric-sub" id="m-mks">Formed · MKs mobilised: —</div></div>
-        <div class="metric-card" style="--accent-color:#a78bfa"><div class="metric-label">Natural Farming Area</div><div class="metric-val" id="m-nf">— ac</div><div class="metric-sub" id="m-nf-vil">Villages: —</div></div>
-      </div>
-      <div class="grid2" style="margin-top:12px">
-        <div class="card">
-          <div class="chart-title">Intervention Coverage</div>
-          <div class="chart-sub">Villages reached by type</div>
-          <div style="margin-top:8px">
-            <div class="progress-row"><span class="progress-label">Farm Livelihood</span><div class="progress-bar-bg"><div class="progress-bar-fill" id="pb-farm" style="width:0%;background:var(--dash-green)"></div></div><span class="progress-val" id="pv-farm">—</span></div>
-            <div class="progress-row"><span class="progress-label">Livestock</span><div class="progress-bar-bg"><div class="progress-bar-fill" id="pb-ls" style="width:0%;background:var(--dash-teal)"></div></div><span class="progress-val" id="pv-ls">—</span></div>
-            <div class="progress-row"><span class="progress-label">Organic Farming</span><div class="progress-bar-bg"><div class="progress-bar-fill" id="pb-org" style="width:0%;background:var(--dash-amber)"></div></div><span class="progress-val" id="pv-org">—</span></div>
-            <div class="progress-row"><span class="progress-label">Nutri Garden HH</span><div class="progress-bar-bg"><div class="progress-bar-fill" id="pb-nutri" style="width:0%;background:var(--dash-purple)"></div></div><span class="progress-val" id="pv-nutri">—</span></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="chart-title">Livelihood Loans — CIF &amp; Bank</div>
-          <div class="chart-sub">Agri + Livestock linkage</div>
-          <div class="chart-wrap" style="height:150px"><canvas id="ch-liv-loans"></canvas></div>
-        </div>
-      </div>
-      <div class="card" style="margin-top:12px">
-        <div class="chart-title">IFC Metrics</div>
-        <div class="chart-sub">Villages · NF Farmers · NF Area · PG Funds</div>
-        <div class="stat-mini-grid">
-          <div class="stat-mini"><div class="stat-mini-label">Villages</div><div class="stat-mini-val" id="ifc-vil">—</div></div>
-          <div class="stat-mini"><div class="stat-mini-label">NF Farmers</div><div class="stat-mini-val" id="ifc-farm">—</div></div>
-          <div class="stat-mini"><div class="stat-mini-label">NF Area (ac)</div><div class="stat-mini-val" id="ifc-area">—</div></div>
-          <div class="stat-mini"><div class="stat-mini-label">PG Funds (₹)</div><div class="stat-mini-val" id="ifc-funds">—</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── SECTION 7: Non-Farm ────────────────────────────────── -->
-    <div class="section-divider">
-      <div class="section-label">7 · Non-Farm Livelihood</div>
-      <div class="grid4">
-        <div class="metric-card" style="--accent-color:#f472b6"><div class="metric-label">PMFME Beneficiaries</div><div class="metric-val" id="m-pmfme">—</div><div class="metric-sub" id="m-pmfme-sub">Applications: — · Amount: ₹—</div></div>
-        <div class="metric-card" style="--accent-color:#fbbf24"><div class="metric-label">Mudra Loans</div><div class="metric-val" id="m-mudra">—</div><div class="metric-sub" id="m-mudra-sub">Amount: ₹—</div></div>
-        <div class="metric-card" style="--accent-color:#34d399"><div class="metric-label">PMEGP</div><div class="metric-val" id="m-pmegp">—</div><div class="metric-sub" id="m-pmegp-sub">Amount: ₹—</div></div>
-        <div class="metric-card" style="--accent-color:#2dd4bf"><div class="metric-label">Total Enterprises</div><div class="metric-val" id="m-ent">—</div><div class="metric-sub" id="m-ent-sub">Individual: — · Group: —</div></div>
-      </div>
-      <div class="grid3" style="margin-top:12px">
-        <div class="card">
-          <div class="chart-title">Enterprise Registrations</div>
-          <div class="chart-sub">FSSAI · UAM · GST</div>
-          <div class="cadre-row"><span class="cadre-name"><span class="cadre-dot" style="background:var(--dash-accent)"></span>FSSAI</span><span class="cadre-val" id="er-fssai">—</span></div>
-          <div class="cadre-row"><span class="cadre-name"><span class="cadre-dot" style="background:var(--dash-green)"></span>UAM</span><span class="cadre-val" id="er-uam">—</span></div>
-          <div class="cadre-row"><span class="cadre-name"><span class="cadre-dot" style="background:var(--dash-amber)"></span>GST</span><span class="cadre-val" id="er-gst">—</span></div>
-        </div>
-        <div class="card">
-          <div class="chart-title">Sales Performance</div>
-          <div class="chart-sub">Total sales · TCPC sales</div>
-          <div class="cadre-row"><span class="cadre-name">Total Sales (₹)</span><span class="cadre-val" id="sp-total">—</span></div>
-          <div class="cadre-row"><span class="cadre-name">TCPC Sales (₹)</span><span class="cadre-val" id="sp-tcpc">—</span></div>
-          <div class="cadre-row"><span class="cadre-name">Events / Fairs / Melas</span><span class="cadre-val" id="sp-events">—</span></div>
-        </div>
-        <div class="card">
-          <div class="chart-title">PLD Income Distribution</div>
-          <div class="chart-sub">Non-farm · Financial linked · By income slab</div>
-          <div class="cadre-row"><span class="cadre-name">PLD Non-Farm</span><span class="cadre-val" id="pld-nf">—</span></div>
-          <div class="cadre-row"><span class="cadre-name">PLD Financial Linked</span><span class="cadre-val" id="pld-fi">—</span></div>
-          <div class="cadre-row"><span class="cadre-name">Income &lt;₹1L</span><span class="cadre-val" id="inc-lt1">—</span></div>
-          <div class="cadre-row"><span class="cadre-name">Income &gt;₹1L</span><span class="cadre-val" id="inc-gt1">—</span></div>
-          <div class="cadre-row"><span class="cadre-name">Income ₹2–3L</span><span class="cadre-val" id="inc-2-3">—</span></div>
-          <div class="cadre-row"><span class="cadre-name">Income ₹3–5L+</span><span class="cadre-val" id="inc-3-5">—</span></div>
-        </div>
-      </div>
-      <div class="card" style="margin-top:12px">
-        <div class="chart-title">Non-Farm Loan Linkage Overview</div>
-        <div class="chart-sub">Individual &amp; Group · CIF and Bank · No. of accounts and amounts (₹)</div>
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead><tr><th>Category</th><th>Ind — No.</th><th>Ind — Amt (₹)</th><th>Ind — Dose</th><th>Grp — No.</th><th>Grp — Amt (₹)</th><th>Grp — Dose</th></tr></thead>
-            <tbody id="loan-table"><tr><td colspan="7" class="empty-note">Loading…</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- FOOTER -->
-    <div style="text-align:center;padding-top:8px;color:var(--dash-muted);font-size:10px;letter-spacing:.06em;text-transform:uppercase">
-      CLF Monthly Reporting System · 2026 · <span id="last-updated">Fetching data…</span>
-    </div>
-
-  </div><!-- /main -->
-</div><!-- /dash-wrap -->
+  <div style="text-align:center;padding-top:8px;color:var(--dash-muted);font-size:10px;letter-spacing:.06em;text-transform:uppercase">
+    CLF Monthly Reporting System · 2026 · <span id="last-updated">—</span>
+  </div>
+</div>
+</div>
 
 <script>
-// ═══════════════════════════════════════════════════
-//  CONFIGURATION — Apps Script Web App URL
-// ═══════════════════════════════════════════════════
+// ── CONFIG ──────────────────────────────────────────────────────
+// JSONP bypasses CORS — works on GitHub Pages, file://, anywhere
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwIzwaJd1e4SNmNF89lRWe6ZSMwerVfGaAwXGPE4NUVA13mGb_J8aw0grbDELThbhza/exec';
 
-// ═══════════════════════════════════════════════════
-//  Chart registry
-// ═══════════════════════════════════════════════════
+// ── Chart registry ───────────────────────────────────────────────
 const CHARTS = {};
-
-function killChart(id) { if (CHARTS[id]) { CHARTS[id].destroy(); delete CHARTS[id]; } }
-
-const CHART_DEFAULTS = {
-  responsive: true, maintainAspectRatio: false,
-  plugins: { legend: { labels: { color: '#8892a4', font: { size: 10 }, boxWidth: 10 } } },
-  scales: {
-    x: { ticks: { color: '#8892a4', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
-    y: { ticks: { color: '#8892a4', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } }
-  }
+function killChart(id){if(CHARTS[id]){CHARTS[id].destroy();delete CHARTS[id];}}
+const CO = {
+  responsive:true, maintainAspectRatio:false,
+  plugins:{legend:{labels:{color:'#8892a4',font:{size:10},boxWidth:10}}},
+  scales:{x:{ticks:{color:'#8892a4',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},
+          y:{ticks:{color:'#8892a4',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}}}
 };
 
-// ═══════════════════════════════════════════════════
-//  Helpers
-// ═══════════════════════════════════════════════════
-function $(id) { return document.getElementById(id); }
-function set(id, val) { const el = $(id); if (el) el.textContent = (val !== null && val !== undefined && val !== '') ? val : '—'; }
-function fmtN(v) {
-  const n = parseFloat(v);
-  if (isNaN(n) || n === 0) return '—';
-  if (n >= 10000000) return '₹' + (n/10000000).toFixed(1) + 'Cr';
-  if (n >= 100000)   return '₹' + (n/100000).toFixed(1) + 'L';
-  if (n >= 1000)     return (n/1000).toFixed(1) + 'K';
-  return n.toLocaleString('en-IN');
-}
-function fmtC(v) { return (v && v !== 0) ? fmtN(v) : '—'; }
-function setProgress(pbId, pvId, val, max) {
-  const pb = $(pbId), pv = $(pvId);
-  const pct = (max > 0 && val > 0) ? Math.min(100, (val / max) * 100) : 0;
-  if (pb) pb.style.width = pct + '%';
-  if (pv) pv.textContent = val || '—';
+// ── Helpers ──────────────────────────────────────────────────────
+function $(id){return document.getElementById(id)}
+function set(id,v){const e=$(id);if(e)e.textContent=(v!==null&&v!==undefined&&v!=='')?v:'—'}
+function fmtC(v){const n=parseFloat(v);if(isNaN(n)||n===0)return '—';if(n>=10000000)return '₹'+(n/10000000).toFixed(1)+'Cr';if(n>=100000)return '₹'+(n/100000).toFixed(1)+'L';if(n>=1000)return '₹'+(n/1000).toFixed(0)+'K';return '₹'+n.toLocaleString('en-IN');}
+function setProgress(pb,pv,val,max){const e=$(pb),p=$(pv);const pct=(max>0&&val>0)?Math.min(100,(val/max)*100):0;if(e)e.style.width=pct+'%';if(p)p.textContent=val||'—';}
+
+function setBanner(type,msg){
+  const b=$('status-banner'),t=$('status-text'),sp=$('spinner'),bk=$('badge-status');
+  b.className='status-banner sb-'+type;
+  t.textContent=msg;
+  if(sp)sp.style.display=(type==='loading')?'block':'none';
+  if(bk){bk.textContent=type==='success'?'Live':type==='error'?'Error':'Loading…';bk.className='badge '+(type==='success'?'badge-green':type==='error'?'badge-red':'badge-blue');}
 }
 
-// ═══════════════════════════════════════════════════
-//  Status banner
-// ═══════════════════════════════════════════════════
-function setBanner(type, msg) {
-  const b = $('status-banner'), t = $('status-text'), sp = $('spinner'), badge = $('badge-status');
-  b.className = 'status-banner banner-' + type;
-  t.textContent = msg;
-  if (sp) sp.style.display = type === 'loading' ? 'block' : 'none';
-  if (badge) {
-    badge.textContent = type === 'success' ? 'Live' : type === 'error' ? 'Error' : 'Loading…';
-    badge.className = 'badge ' + (type === 'success' ? 'badge-green' : type === 'error' ? 'badge-red' : 'badge-blue');
-  }
-}
+// ── Populate dashboard ───────────────────────────────────────────
+function populate(d){
+  set('m-loans',d.loansSanctioned||'—');
+  set('m-amount',fmtC(d.amountSanctioned));
+  set('m-repay',fmtC(d.loanRepayment));
+  set('m-default',d.defaulterRepayment||'—');
 
-// ═══════════════════════════════════════════════════
-//  Populate dashboard
-// ═══════════════════════════════════════════════════
-function populate(d) {
-  // Section 1
-  set('m-loans',  d.loansSanctioned || '—');
-  set('m-amount', fmtC(d.amountSanctioned));
-  set('m-repay',  fmtC(d.loanRepayment));
-  set('m-default',d.defaulterRepayment || '—');
-
-  // Loan trend chart
   killChart('lt');
-  const lt = d.loanTrend || {};
-  if ((lt.months||[]).length) {
-    CHARTS['lt'] = new Chart($('ch-loan-trend'), {
-      type: 'line',
-      data: {
-        labels: lt.months,
-        datasets: [
-          { label: 'Loan Demand', data: lt.loanDemand, borderColor: '#4f8ef7', backgroundColor: 'rgba(79,142,247,0.1)', tension: 0.4, pointRadius: 3 },
-          { label: 'Loan Received', data: lt.loanReceived, borderColor: '#34d399', backgroundColor: 'rgba(52,211,153,0.1)', tension: 0.4, pointRadius: 3 }
-        ]
-      },
-      options: { ...CHART_DEFAULTS }
-    });
+  const lt=d.loanTrend||{};
+  if((lt.months||[]).length){
+    CHARTS['lt']=new Chart($('ch-loan-trend'),{type:'line',data:{labels:lt.months,datasets:[
+      {label:'Loan Demand',data:lt.loanDemand,borderColor:'#4f8ef7',backgroundColor:'rgba(79,142,247,0.1)',tension:.4,pointRadius:3},
+      {label:'Loan Received',data:lt.loanReceived,borderColor:'#34d399',backgroundColor:'rgba(52,211,153,0.1)',tension:.4,pointRadius:3}
+    ]},options:{...CO}});
   }
-
-  // Fund breakdown donut
   killChart('fd');
-  const fb = d.fundBreakdown || {};
-  const fdVals = [fb.CIF||0, fb.VGF||0, fb.PMFME||0, fb.MKSP||0, fb.SVEP||0];
-  if (fdVals.some(v => v > 0)) {
-    CHARTS['fd'] = new Chart($('ch-fund'), {
-      type: 'doughnut',
-      data: { labels: ['CIF','VGF','PMFME','MKSP','SVEP'], datasets: [{ data: fdVals, backgroundColor: ['#4f8ef7','#34d399','#fbbf24','#a78bfa','#2dd4bf'], borderWidth: 0 }] },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#8892a4', font: { size: 10 }, boxWidth: 10 } } } }
-    });
-  }
-
-  // Block compare bar
+  const fb=d.fundBreakdown||{};
+  const fdV=[fb.CIF||0,fb.VGF||0,fb.PMFME||0,fb.MKSP||0,fb.SVEP||0];
+  if(fdV.some(v=>v>0)){CHARTS['fd']=new Chart($('ch-fund'),{type:'doughnut',data:{labels:['CIF','VGF','PMFME','MKSP','SVEP'],datasets:[{data:fdV,backgroundColor:['#4f8ef7','#34d399','#fbbf24','#a78bfa','#2dd4bf'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#8892a4',font:{size:10},boxWidth:10}}}}});}
   killChart('bc');
-  const bc = d.blockCompare || {};
-  if ((bc.blocks||[]).length) {
-    CHARTS['bc'] = new Chart($('ch-block'), {
-      type: 'bar',
-      data: { labels: bc.blocks, datasets: [
-        { label: 'Idle Fund', data: bc.idleFund, backgroundColor: 'rgba(79,142,247,0.7)' },
-        { label: 'Loan Outstanding', data: bc.loanOutstanding, backgroundColor: 'rgba(52,211,153,0.7)' },
-        { label: 'NPA SHGs', data: bc.npaSHGs, backgroundColor: 'rgba(248,113,113,0.7)' }
-      ]},
-      options: { ...CHART_DEFAULTS }
-    });
-  }
+  const bc=d.blockCompare||{};
+  if((bc.blocks||[]).length){CHARTS['bc']=new Chart($('ch-block'),{type:'bar',data:{labels:bc.blocks,datasets:[{label:'Idle Fund',data:bc.idleFund,backgroundColor:'rgba(79,142,247,0.7)'},{label:'Loan Outstanding',data:bc.loanOutstanding,backgroundColor:'rgba(52,211,153,0.7)'},{label:'NPA SHGs',data:bc.npaSHGs,backgroundColor:'rgba(248,113,113,0.7)'}]},options:{...CO}});}
 
-  // Section 2
-  set('m-shgs', d.totalSHGs);
-  set('m-aadhaar', 'Aadhaar covered: ' + (d.aadhaarCovered || '—'));
-  set('m-lokos-shg', d.lokosSHGs);
-  set('m-lokos-shg-txn', 'Transactions done: ' + (d.lokosShgTxn || '—'));
-  set('m-lokos-vo', d.lokosVOs);
-  set('m-lokos-vo-txn', 'Transactions done: ' + (d.lokosVoTxn || '—'));
-  set('m-cadres', d.cadresLokos);
-  set('m-vo-bank', 'VOs with Bank A/C: ' + (d.voBankAc || '—'));
-  const maxTr = Math.max(d.trainingCLF||0, d.trainingVO||0, d.trainingSHG||0, d.trainingCadre||0, 1);
-  setProgress('pb-clf','pv-clf',   d.trainingCLF,   maxTr);
-  setProgress('pb-vo','pv-vo',     d.trainingVO,    maxTr);
-  setProgress('pb-shg','pv-shg',   d.trainingSHG,   maxTr);
-  setProgress('pb-cadre','pv-cadre',d.trainingCadre, maxTr);
-  set('c-bank',   d.bankSakhi);
-  set('c-krishi', d.krishiSakhi);
-  set('c-pashu',  d.pashuSakhi);
-  set('c-mbk',    d.mbkAwMcp);
-  set('c-crp',    d.crpEpIcrpAcrp);
-  set('c-fl',     d.financialLiteracy);
+  set('m-shgs',d.totalSHGs);set('m-aadhaar','Aadhaar covered: '+(d.aadhaarCovered||'—'));
+  set('m-lokos-shg',d.lokosSHGs);set('m-lokos-shg-txn','Transactions: '+(d.lokosShgTxn||'—'));
+  set('m-lokos-vo',d.lokosVOs);set('m-lokos-vo-txn','Transactions: '+(d.lokosVoTxn||'—'));
+  set('m-cadres',d.cadresLokos);set('m-vo-bank','VOs with Bank A/C: '+(d.voBankAc||'—'));
+  const mx=Math.max(d.trainingCLF||0,d.trainingVO||0,d.trainingSHG||0,d.trainingCadre||0,1);
+  setProgress('pb-clf','pv-clf',d.trainingCLF,mx);setProgress('pb-vo','pv-vo',d.trainingVO,mx);
+  setProgress('pb-shg','pv-shg',d.trainingSHG,mx);setProgress('pb-cadre','pv-cadre',d.trainingCadre,mx);
+  set('c-bank',d.bankSakhi);set('c-krishi',d.krishiSakhi);set('c-pashu',d.pashuSakhi);
+  set('c-mbk',d.mbkAwMcp);set('c-crp',d.crpEpIcrpAcrp);set('c-fl',d.financialLiteracy);
 
-  // Section 3
-  set('g-sa', d.shgGradeA); set('g-sb', d.shgGradeB); set('g-sc', d.shgGradeC); set('g-sd', d.shgGradeD);
-  set('g-va', d.voGradeA);  set('g-vb', d.voGradeB);  set('g-vc', d.voGradeC);  set('g-vd', d.voGradeD);
-  set('m-audit-shg', d.auditSHG);
-  set('m-audit-vo',  d.auditVO);
-  set('m-mcp',       d.mcpCompleted);
-  set('m-subcomm',   d.subCommittees);
-
-  // FNHW chart
+  set('g-sa',d.shgGradeA);set('g-sb',d.shgGradeB);set('g-sc',d.shgGradeC);set('g-sd',d.shgGradeD);
+  set('g-va',d.voGradeA);set('g-vb',d.voGradeB);set('g-vc',d.voGradeC);set('g-vd',d.voGradeD);
+  set('m-audit-shg',d.auditSHG);set('m-audit-vo',d.auditVO);set('m-mcp',d.mcpCompleted);set('m-subcomm',d.subCommittees);
   killChart('fnhw');
-  const fn = d.fnhw || {};
-  if ((fn.labels||[]).length) {
-    CHARTS['fnhw'] = new Chart($('ch-fnhw'), {
-      type: 'bar',
-      data: { labels: fn.labels, datasets: [{ data: fn.values, backgroundColor: ['#4f8ef7','#34d399','#fbbf24','#a78bfa','#2dd4bf'], borderRadius: 4 }] },
-      options: { ...CHART_DEFAULTS, plugins: { legend: { display: false } } }
-    });
-  }
+  const fn=d.fnhw||{};
+  if((fn.labels||[]).length){CHARTS['fnhw']=new Chart($('ch-fnhw'),{type:'bar',data:{labels:fn.labels,datasets:[{data:fn.values,backgroundColor:['#4f8ef7','#34d399','#fbbf24','#a78bfa','#2dd4bf'],borderRadius:4}]},options:{...CO,plugins:{legend:{display:false}}}});}
 
-  // Section 4&5
-  set('fi-pmjjby', d.pmjjby); set('fi-pmsby', d.pmsby);
-  set('fi-mhis',   d.mhis);   set('fi-apy',   d.apy);
-  set('m-bank-shg', d.bankLoanSHGs);
-  set('m-flc',      d.flcSessions);
+  set('fi-pmjjby',d.pmjjby);set('fi-pmsby',d.pmsby);set('fi-mhis',d.mhis);set('fi-apy',d.apy);
+  set('m-bank-shg',d.bankLoanSHGs);set('m-flc',d.flcSessions);
 
-  // Section 6
-  set('m-lakh-t', d.lakhpatiTarget);
-  set('m-lakh-a', d.lakhpatiAchieved);
-  set('m-pg',     d.producerGroups);
-  set('m-mks',    'Formed · MKs mobilised: ' + (d.mksMobilised || '—'));
-  set('m-nf',     (d.naturalFarmingArea || '—') + ' ac');
-  set('m-nf-vil', 'Villages: ' + (d.naturalFarmingVillages || '—'));
-  const maxInt = Math.max(d.intFarm||0, d.intLivestock||0, d.intOrganic||0, d.intNutri||0, 1);
-  setProgress('pb-farm','pv-farm',   d.intFarm,      maxInt);
-  setProgress('pb-ls','pv-ls',       d.intLivestock, maxInt);
-  setProgress('pb-org','pv-org',     d.intOrganic,   maxInt);
-  setProgress('pb-nutri','pv-nutri', d.intNutri,     maxInt);
-
-  // Livelihood loans chart
+  set('m-lakh-t',d.lakhpatiTarget);set('m-lakh-a',d.lakhpatiAchieved);set('m-pg',d.producerGroups);
+  set('m-mks','Formed · MKs mobilised: '+(d.mksMobilised||'—'));
+  set('m-nf',(d.naturalFarmingArea||'—')+' ac');set('m-nf-vil','Villages: '+(d.naturalFarmingVillages||'—'));
+  const mi=Math.max(d.intFarm||0,d.intLivestock||0,d.intOrganic||0,d.intNutri||0,1);
+  setProgress('pb-farm','pv-farm',d.intFarm,mi);setProgress('pb-ls','pv-ls',d.intLivestock,mi);
+  setProgress('pb-org','pv-org',d.intOrganic,mi);setProgress('pb-nutri','pv-nutri',d.intNutri,mi);
   killChart('ll');
-  const ll = d.livelihoodLoans || {};
-  const llVals = [ll.agriCIF||0, ll.agriBank||0, ll.livestockCIF||0, ll.livestockBank||0];
-  if (llVals.some(v => v > 0)) {
-    CHARTS['ll'] = new Chart($('ch-liv-loans'), {
-      type: 'bar',
-      data: { labels: ['Agri-CIF','Agri-Bank','LS-CIF','LS-Bank'], datasets: [{ data: llVals, backgroundColor: ['#34d399','#4f8ef7','#2dd4bf','#a78bfa'], borderRadius: 4 }] },
-      options: { ...CHART_DEFAULTS, plugins: { legend: { display: false } } }
-    });
-  }
+  const ll=d.livelihoodLoans||{};
+  const llV=[ll.agriCIF||0,ll.agriBank||0,ll.livestockCIF||0,ll.livestockBank||0];
+  if(llV.some(v=>v>0)){CHARTS['ll']=new Chart($('ch-liv-loans'),{type:'bar',data:{labels:['Agri-CIF','Agri-Bank','LS-CIF','LS-Bank'],datasets:[{data:llV,backgroundColor:['#34d399','#4f8ef7','#2dd4bf','#a78bfa'],borderRadius:4}]},options:{...CO,plugins:{legend:{display:false}}}});}
+  set('ifc-vil',d.ifcVillages);set('ifc-farm',d.ifcFarmers);set('ifc-area',d.ifcArea);set('ifc-funds',fmtC(d.ifcPGFunds));
 
-  set('ifc-vil',   d.ifcVillages);
-  set('ifc-farm',  d.ifcFarmers);
-  set('ifc-area',  d.ifcArea);
-  set('ifc-funds', fmtC(d.ifcPGFunds));
+  set('m-pmfme',d.pmfmeBeneficiaries);set('m-pmfme-sub','Applications: '+(d.pmfmeApplications||'—')+' · Amount: '+fmtC(d.pmfmeAmount));
+  set('m-mudra',d.mudraLoans);set('m-mudra-sub','Amount: '+fmtC(d.mudraAmount));
+  set('m-pmegp',d.pmegp);set('m-pmegp-sub','Amount: '+fmtC(d.pmegpAmount));
+  set('m-ent',d.totalEnterprises);set('m-ent-sub','Individual: '+(d.indEnterprises||'—')+' · Group: '+(d.grpEnterprises||'—'));
+  set('er-fssai',d.fssai);set('er-uam',d.uam);set('er-gst',d.gst);
+  set('sp-total',fmtC(d.totalSales));set('sp-tcpc',fmtC(d.tcpcSales));set('sp-events',d.events);
+  set('pld-nf',d.pldNonFarm);set('pld-fi',d.pldFinancialLinked);
+  set('inc-lt1',d.incLt1L);set('inc-gt1',d.incGt1L);set('inc-2-3',d.inc2to3L);set('inc-3-5',d.inc3to5L);
 
-  // Section 7
-  set('m-pmfme', d.pmfmeBeneficiaries);
-  set('m-pmfme-sub', 'Applications: ' + (d.pmfmeApplications||'—') + ' · Amount: ' + fmtC(d.pmfmeAmount));
-  set('m-mudra',     d.mudraLoans);
-  set('m-mudra-sub', 'Amount: ' + fmtC(d.mudraAmount));
-  set('m-pmegp',     d.pmegp);
-  set('m-pmegp-sub', 'Amount: ' + fmtC(d.pmegpAmount));
-  set('m-ent',       d.totalEnterprises);
-  set('m-ent-sub',   'Individual: ' + (d.indEnterprises||'—') + ' · Group: ' + (d.grpEnterprises||'—'));
-  set('er-fssai', d.fssai); set('er-uam', d.uam); set('er-gst', d.gst);
-  set('sp-total',  fmtC(d.totalSales));
-  set('sp-tcpc',   fmtC(d.tcpcSales));
-  set('sp-events', d.events);
-  set('pld-nf', d.pldNonFarm); set('pld-fi', d.pldFinancialLinked);
-  set('inc-lt1', d.incLt1L);   set('inc-gt1', d.incGt1L);
-  set('inc-2-3', d.inc2to3L);  set('inc-3-5', d.inc3to5L);
-
-  // Loan table
-  const tbody = $('loan-table');
-  const rows = d.loanLinkage || [];
-  tbody.innerHTML = rows.length
-    ? rows.map(r => `<tr><td>${r.category||'—'}</td><td>${r.indNo||'—'}</td><td>${fmtC(r.indAmt)}</td><td>${r.indDose||'—'}</td><td>${r.grpNo||'—'}</td><td>${fmtC(r.grpAmt)}</td><td>${r.grpDose||'—'}</td></tr>`).join('')
-    : '<tr><td colspan="7" class="empty-note">No loan data received yet</td></tr>';
-
-  set('last-updated', d.lastUpdated ? 'Last updated: ' + d.lastUpdated : 'All sections auto-populate on data submission');
+  const tb=$('loan-table'),rows=d.loanLinkage||[];
+  tb.innerHTML=rows.length?rows.map(r=>`<tr><td>${r.category||'—'}</td><td>${r.indNo||'—'}</td><td>${fmtC(r.indAmt)}</td><td>${r.indDose||'—'}</td><td>${r.grpNo||'—'}</td><td>${fmtC(r.grpAmt)}</td><td>${r.grpDose||'—'}</td></tr>`).join(''):'<tr><td colspan="7" class="empty-note">No loan data yet</td></tr>';
+  set('last-updated',d.lastUpdated?'Last updated: '+d.lastUpdated:'All sections auto-populate on data submission');
 }
 
-// ═══════════════════════════════════════════════════
-//  Main fetch function — uses no-cors via redirect
-// ═══════════════════════════════════════════════════
-
-  async function loadDashboardData(month) {
-
-  setBanner('loading', 'Connecting to Google Sheets… please wait.');
-
-  const url =
-    SCRIPT_URL +
-    (month && month !== 'All'
-      ? '?month=' + encodeURIComponent(month)
-      : '') +
-    (month ? '&' : '?') +
-    't=' + Date.now();
-
-  try {
-
-    const res = await fetch(url, {
-      method: 'GET',
-      mode: 'cors',
-      headers: {
-        'Accept': 'application/json'
-      }
-    });
-
-    if (!res.ok) {
-      throw new Error('HTTP ' + res.status);
+// ── JSONP loader — no CORS issues on any host ────────────────────
+function loadDashboardData(month){
+  setBanner('loading','Connecting to Google Sheets…');
+  const old=document.getElementById('_jsonp');
+  if(old)old.remove();
+  window.__clf_cb=function(data){
+    try{
+      if(data.error)throw new Error(data.error);
+      if(data.noData){setBanner('loading','Connected — no data for '+(month||'any month'));return;}
+      populate(data);
+      setBanner('success','✓ Data loaded successfully from Google Sheets.');
+    }catch(e){
+      setBanner('error','✗ '+e.message);
+      console.error('CLF Dashboard:',e);
     }
-
-    const data = await res.json();
-
-    if (!data) {
-      throw new Error('No response received');
-    }
-
-    if (data.error) {
-      throw new Error(data.error);
-    }
-
-    if (data.noData) {
-      setBanner(
-        'loading',
-        'Connected. No data submitted yet for ' +
-          (month || 'any month') +
-          '.'
-      );
-      return;
-    }
-
-    populate(data);
-
-    setBanner(
-      'success',
-      '✓ Data loaded successfully from Google Sheets.'
-    );
-
-  } catch (err) {
-
-    console.error('CLF Dashboard error:', err);
-
-    setBanner(
-      'error',
-      '✗ Unable to connect to Google Apps Script. Check deployment access and CORS permissions.'
-    );
-  }
+  };
+  let url=SCRIPT_URL+'?callback=__clf_cb';
+  if(month&&month!=='All')url+='&month='+encodeURIComponent(month);
+  url+='&t='+Date.now();
+  const s=document.createElement('script');
+  s.id='_jsonp';s.src=url;
+  s.onerror=function(){setBanner('error','✗ Cannot reach Apps Script — redeploy with "Anyone" access and verify the URL is correct.');};
+  document.body.appendChild(s);
 }
 
-// ═══════════════════════════════════════════════════
-//  Month filter
-// ═══════════════════════════════════════════════════
-function applyFilter(el, month) {
-  document.querySelectorAll('.filter-bar .filter-pill').forEach(p => p.classList.remove('active'));
+// ── Filter ───────────────────────────────────────────────────────
+function applyFilter(el,month){
+  document.querySelectorAll('.filter-bar .filter-pill').forEach(p=>p.classList.remove('active'));
   el.classList.add('active');
   loadDashboardData(month);
 }
 
-// ═══════════════════════════════════════════════════
-//  Init
-// ═══════════════════════════════════════════════════
-window.addEventListener('DOMContentLoaded', () => loadDashboardData('All'));
+// ── Init ─────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded',()=>loadDashboardData('All'));
 </script>
 </body>
 </html>
