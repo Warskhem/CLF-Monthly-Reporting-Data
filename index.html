@@ -140,7 +140,6 @@ table.data-table tr:hover td{background:rgba(255,255,255,.02)}
     <span id="status-text">Connecting to Google Sheets…</span>
   </div>
 
-  <!-- SECTION 1 -->
   <div class="section-divider">
     <div class="section-label">1 · Financial Report</div>
     <div class="grid4">
@@ -156,7 +155,6 @@ table.data-table tr:hover td{background:rgba(255,255,255,.02)}
     <div class="card" style="margin-top:12px"><div class="chart-title">Idle Fund · Loan Outstanding · NPA SHGs</div><div class="chart-sub">Block-wise comparison</div><div class="chart-wrap" style="height:160px"><canvas id="ch-block" role="img" aria-label="Block comparison">Block data</canvas></div></div>
   </div>
 
-  <!-- SECTION 2 -->
   <div class="section-divider">
     <div class="section-label">2 · M&amp;E Report</div>
     <div class="grid4">
@@ -187,7 +185,6 @@ table.data-table tr:hover td{background:rgba(255,255,255,.02)}
     </div>
   </div>
 
-  <!-- SECTION 3 -->
   <div class="section-divider">
     <div class="section-label">3 · IBCB Report</div>
     <div class="grid2">
@@ -207,7 +204,6 @@ table.data-table tr:hover td{background:rgba(255,255,255,.02)}
     <div class="card" style="margin-top:12px"><div class="chart-title">FNHW &amp; Community Engagement</div><div class="chart-sub">Follow-up pregnancies · VHND · Gram Sabha · Community events · Transit home</div><div class="chart-wrap" style="height:140px"><canvas id="ch-fnhw" role="img" aria-label="FNHW chart">FNHW data</canvas></div></div>
   </div>
 
-  <!-- SECTION 4&5 -->
   <div class="section-divider">
     <div class="section-label">4 &amp; 5 · SISD &amp; Financial Inclusion</div>
     <div class="grid4">
@@ -222,7 +218,6 @@ table.data-table tr:hover td{background:rgba(255,255,255,.02)}
     </div>
   </div>
 
-  <!-- SECTION 6 -->
   <div class="section-divider">
     <div class="section-label">6 · Livelihoods Report</div>
     <div class="grid4">
@@ -254,7 +249,6 @@ table.data-table tr:hover td{background:rgba(255,255,255,.02)}
     </div>
   </div>
 
-  <!-- SECTION 7 -->
   <div class="section-divider">
     <div class="section-label">7 · Non-Farm Livelihood</div>
     <div class="grid4">
@@ -301,31 +295,268 @@ table.data-table tr:hover td{background:rgba(255,255,255,.02)}
 </div>
 
 <script>
-
-// ── CONFIG ──────────────────────────────────────────────────────
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwIzwaJd1e4SNmNF89lRWe6ZSMwerVfGaAwXGPE4NUVA13mGb_J8aw0grbDELThbhza/exec';
 
-// ── Chart registry ───────────────────────────────────────────────
 const CHARTS = {};
-function killChart(id){if(CHARTS[id]){CHARTS[id].destroy();delete CHARTS[id];}}
+function killChart(id) { if (CHARTS[id]) { CHARTS[id].destroy(); delete CHARTS[id]; } }
 const CO = {
-  responsive:true, maintainAspectRatio:false,
-  plugins:{legend:{labels:{color:'#8892a4',font:{size:10},boxWidth:10}}},
-  scales:{x:{ticks:{color:'#8892a4',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}},
-          y:{ticks:{color:'#8892a4',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}}}
+  responsive: true, maintainAspectRatio: false,
+  plugins: { legend: { labels: { color: '#8892a4', font: { size: 10 }, boxWidth: 10 } } },
+  scales: {
+    x: { ticks: { color: '#8892a4', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+    y: { ticks: { color: '#8892a4', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } }
+  }
 };
 
-// ── Helpers ──────────────────────────────────────────────────────
-function $(id){return document.getElementById(id)}
-function set(id,v){const e=$(id);if(e)e.textContent=(v!==null&&v!==undefined&&v!=='')?v:'—'}
-function fmtC(v){const n=parseFloat(v);if(isNaN(n)||n===0)return '—';if(n>=10000000)return '₹'+(n/10000000).toFixed(1)+'Cr';if(n>=100000)return '₹'+(n/100000).toFixed(1)+'L';if(n>=1000)return '₹'+(n/1000).toFixed(0)+'K';return '₹'+n.toLocaleString('en-IN');}
-function setProgress(pb,pv,val,max){const e=$(pb),p=$(pv);const pct=(max>0&&val>0)?Math.min(100,(val/max)*100):0;if(e)e.style.width=pct+'%';if(p)p.textContent=val||'—';}
-
-function setBanner(type,msg){
-  const b=$('status-banner'),t=$('status-text'),sp=$('spinner'),bk=$('badge-status');
-  b.className='status-banner sb-'+type;
-  t.textContent=msg;
-  if(sp)sp.style.display=(type==='loading')?'block':'none';
-  if(bk){bk.textContent=type==='success'?'Live':type==='error'?'Error':'Loading…';bk.className='badge '+(type==='success'?'badge-green':type==='error'?'badge-red':'badge-blue');}
+function $(id) { return document.getElementById(id); }
+function set(id, v) {
+  const e = $(id);
+  if (e) e.textContent = (v !== null && v !== undefined && v !== '') ? v : '\u2014';
 }
-/
+function fmtC(v) {
+  const n = parseFloat(v);
+  if (isNaN(n) || n === 0) return '\u2014';
+  if (n >= 10000000) return '\u20B9' + (n / 10000000).toFixed(1) + 'Cr';
+  if (n >= 100000) return '\u20B9' + (n / 100000).toFixed(1) + 'L';
+  if (n >= 1000) return '\u20B9' + (n / 1000).toFixed(0) + 'K';
+  return '\u20B9' + n.toLocaleString('en-IN');
+}
+function fmtN(v) {
+  const n = parseFloat(v);
+  return isNaN(n) ? '\u2014' : n.toLocaleString('en-IN');
+}
+function setProgress(pb, pv, val, max) {
+  const e = $(pb), p = $(pv);
+  const pct = (max > 0 && val > 0) ? Math.min(100, (val / max) * 100) : 0;
+  if (e) e.style.width = pct + '%';
+  if (p) p.textContent = fmtN(val);
+}
+
+function setBanner(type, msg) {
+  const b = $('status-banner'), t = $('status-text'), sp = $('spinner'), bk = $('badge-status');
+  b.className = 'status-banner sb-' + type;
+  t.textContent = msg;
+  if (sp) sp.style.display = (type === 'loading') ? 'block' : 'none';
+  if (bk) {
+    bk.textContent = type === 'success' ? 'Live' : type === 'error' ? 'Error' : 'Loading\u2026';
+    bk.className = 'badge ' + (type === 'success' ? 'badge-green' : type === 'error' ? 'badge-red' : 'badge-blue');
+  }
+}
+
+function renderMetrics(d) {
+  set('m-loans', fmtN(d.loansSanctioned));
+  set('m-amount', fmtC(d.amountSanctioned));
+  set('m-repay', fmtC(d.loanRepayment));
+  set('m-default', fmtN(d.defaulterRepayment));
+  set('m-shgs', fmtN(d.totalSHGs));
+  set('m-aadhaar', 'Aadhaar covered: ' + fmtN(d.aadhaarCovered));
+  set('m-lokos-shg', fmtN(d.lokosSHGs));
+  set('m-lokos-shg-txn', 'Transactions: ' + fmtN(d.lokosShgTxn));
+  set('m-lokos-vo', fmtN(d.lokosVOs));
+  set('m-lokos-vo-txn', 'Transactions: ' + fmtN(d.lokosVoTxn));
+  set('m-cadres', fmtN(d.cadresLokos));
+  set('m-vo-bank', 'VOs with Bank A/C: ' + fmtN(d.voBankAc));
+
+  var tMax = Math.max(d.trainingCLF || 0, d.trainingVO || 0, d.trainingSHG || 0, d.trainingCadre || 0);
+  setProgress('pb-clf', 'pv-clf', d.trainingCLF, tMax);
+  setProgress('pb-vo', 'pv-vo', d.trainingVO, tMax);
+  setProgress('pb-shg', 'pv-shg', d.trainingSHG, tMax);
+  setProgress('pb-cadre', 'pv-cadre', d.trainingCadre, tMax);
+
+  set('c-bank', fmtN(d.bankSakhi));
+  set('c-krishi', fmtN(d.krishiSakhi));
+  set('c-pashu', fmtN(d.pashuSakhi));
+  set('c-mbk', fmtN(d.mbkAwMcp));
+  set('c-crp', fmtN(d.crpEpIcrpAcrp));
+  set('c-fl', fmtN(d.financialLiteracy));
+
+  set('g-sa', fmtN(d.shgGradeA));
+  set('g-sb', fmtN(d.shgGradeB));
+  set('g-sc', fmtN(d.shgGradeC));
+  set('g-sd', fmtN(d.shgGradeD));
+  set('g-va', fmtN(d.voGradeA));
+  set('g-vb', fmtN(d.voGradeB));
+  set('g-vc', fmtN(d.voGradeC));
+  set('g-vd', fmtN(d.voGradeD));
+
+  set('m-audit-shg', fmtN(d.auditSHG));
+  set('m-audit-vo', fmtN(d.auditVO));
+  set('m-mcp', fmtN(d.mcpCompleted));
+  set('m-subcomm', fmtN(d.subCommittees));
+
+  set('fi-pmjjby', fmtN(d.pmjjby));
+  set('fi-pmsby', fmtN(d.pmsby));
+  set('fi-mhis', fmtN(d.mhis));
+  set('fi-apy', fmtN(d.apy));
+  set('m-bank-shg', fmtN(d.bankLoanSHGs));
+  set('m-flc', fmtN(d.flcSessions));
+
+  set('m-lakh-t', fmtN(d.lakhpatiTarget));
+  set('m-lakh-a', fmtN(d.lakhpatiAchieved));
+  set('m-pg', fmtN(d.producerGroups));
+  set('m-mks', 'Formed \u00B7 MKs mobilised: ' + fmtN(d.mksMobilised));
+  set('m-nf', fmtN(d.naturalFarmingArea) + ' ac');
+  set('m-nf-vil', 'Villages: ' + fmtN(d.naturalFarmingVillages));
+
+  var imax = Math.max(d.intFarm || 0, d.intLivestock || 0, d.intOrganic || 0, d.intNutri || 0);
+  setProgress('pb-farm', 'pv-farm', d.intFarm, imax);
+  setProgress('pb-ls', 'pv-ls', d.intLivestock, imax);
+  setProgress('pb-org', 'pv-org', d.intOrganic, imax);
+  setProgress('pb-nutri', 'pv-nutri', d.intNutri, imax);
+
+  set('ifc-vil', fmtN(d.ifcVillages));
+  set('ifc-farm', fmtN(d.ifcFarmers));
+  set('ifc-area', fmtN(d.ifcArea));
+  set('ifc-funds', fmtC(d.ifcPGFunds));
+
+  set('m-pmfme', fmtN(d.pmfmeBeneficiaries));
+  set('m-pmfme-sub', 'Applications: ' + fmtN(d.pmfmeApplications) + ' \u00B7 Amount: ' + fmtC(d.pmfmeAmount));
+  set('m-mudra', fmtN(d.mudraLoans));
+  set('m-mudra-sub', 'Amount: ' + fmtC(d.mudraAmount));
+  set('m-pmegp', fmtN(d.pmegp));
+  set('m-pmegp-sub', 'Amount: ' + fmtC(d.pmegpAmount));
+  set('m-ent', fmtN(d.totalEnterprises));
+  set('m-ent-sub', 'Individual: ' + fmtN(d.indEnterprises) + ' \u00B7 Group: ' + fmtN(d.grpEnterprises));
+
+  set('er-fssai', fmtN(d.fssai));
+  set('er-uam', fmtN(d.uam));
+  set('er-gst', fmtN(d.gst));
+  set('sp-total', fmtC(d.totalSales));
+  set('sp-tcpc', fmtC(d.tcpcSales));
+  set('sp-events', fmtN(d.events));
+  set('pld-nf', fmtN(d.pldNonFarm));
+  set('pld-fi', fmtN(d.pldFinancialLinked));
+  set('inc-lt1', fmtN(d.incLt1L));
+  set('inc-gt1', fmtN(d.incGt1L));
+  set('inc-2-3', fmtN(d.inc2to3L));
+  set('inc-3-5', fmtN(d.inc3to5L));
+
+  set('last-updated', d.lastUpdated || '\u2014');
+
+  var tbody = $('loan-table');
+  if (tbody && d.loanLinkage) {
+    tbody.innerHTML = d.loanLinkage.map(function(r) {
+      return '<tr><td>' + r.category + '</td><td>' + fmtN(r.indNo) + '</td><td>' + fmtC(r.indAmt) + '</td><td>' + fmtC(r.indDose) + '</td><td>' + fmtN(r.grpNo) + '</td><td>' + fmtC(r.grpAmt) + '</td><td>' + fmtC(r.grpDose) + '</td></tr>';
+    }).join('');
+  }
+}
+
+function renderCharts(d) {
+  if (d.loanTrend && d.loanTrend.months && d.loanTrend.months.length) {
+    killChart('ch-loan-trend');
+    CHARTS['ch-loan-trend'] = new Chart($('ch-loan-trend'), {
+      type: 'bar',
+      data: {
+        labels: d.loanTrend.months,
+        datasets: [
+          { label: 'Loan Demand', data: d.loanTrend.loanDemand, backgroundColor: 'rgba(79,142,247,.7)', borderRadius: 3 },
+          { label: 'Loan Received', data: d.loanTrend.loanReceived, backgroundColor: 'rgba(52,211,153,.7)', borderRadius: 3 }
+        ]
+      },
+      options: Object.assign({}, CO, { plugins: Object.assign({}, CO.plugins, { legend: Object.assign({}, CO.plugins.legend, { display: true }) }) })
+    });
+  }
+
+  if (d.fundBreakdown) {
+    killChart('ch-fund');
+    var fb = d.fundBreakdown;
+    var fundLabels = Object.keys(fb);
+    var fundValues = fundLabels.map(function(k) { return fb[k]; });
+    CHARTS['ch-fund'] = new Chart($('ch-fund'), {
+      type: 'doughnut',
+      data: {
+        labels: fundLabels,
+        datasets: [{ data: fundValues, backgroundColor: ['rgba(79,142,247,.8)','rgba(52,211,153,.8)','rgba(251,191,36,.8)','rgba(168,85,247,.8)','rgba(45,212,191,.8)'] }]
+      },
+      options: Object.assign({}, CO, { plugins: Object.assign({}, CO.plugins, { legend: Object.assign({}, CO.plugins.legend, { position: 'right' }) }) })
+    });
+  }
+
+  if (d.blockCompare && d.blockCompare.blocks && d.blockCompare.blocks.length) {
+    killChart('ch-block');
+    var bc = d.blockCompare;
+    CHARTS['ch-block'] = new Chart($('ch-block'), {
+      type: 'bar',
+      data: {
+        labels: bc.blocks,
+        datasets: [
+          { label: 'Idle Fund', data: bc.idleFund, backgroundColor: 'rgba(79,142,247,.7)', borderRadius: 3 },
+          { label: 'Loan Outstanding', data: bc.loanOutstanding, backgroundColor: 'rgba(251,191,36,.7)', borderRadius: 3 },
+          { label: 'NPA SHGs', data: bc.npaSHGs, backgroundColor: 'rgba(248,113,113,.7)', borderRadius: 3 }
+        ]
+      },
+      options: Object.assign({}, CO, { plugins: Object.assign({}, CO.plugins, { legend: Object.assign({}, CO.plugins.legend, { display: true }) }) })
+    });
+  }
+
+  if (d.fnhw && d.fnhw.labels) {
+    killChart('ch-fnhw');
+    CHARTS['ch-fnhw'] = new Chart($('ch-fnhw'), {
+      type: 'bar',
+      data: {
+        labels: d.fnhw.labels,
+        datasets: [{ label: 'Count', data: d.fnhw.values, backgroundColor: 'rgba(79,142,247,.7)', borderRadius: 3 }]
+      },
+      options: Object.assign({}, CO, { plugins: Object.assign({}, CO.plugins, { legend: Object.assign({}, CO.plugins.legend, { display: false }) }) })
+    });
+  }
+
+  if (d.livelihoodLoans) {
+    killChart('ch-liv-loans');
+    var ll = d.livelihoodLoans;
+    CHARTS['ch-liv-loans'] = new Chart($('ch-liv-loans'), {
+      type: 'bar',
+      data: {
+        labels: ['Agri', 'Livestock'],
+        datasets: [
+          { label: 'CIF', data: [ll.agriCIF, ll.livestockCIF], backgroundColor: 'rgba(79,142,247,.7)', borderRadius: 3 },
+          { label: 'Bank', data: [ll.agriBank, ll.livestockBank], backgroundColor: 'rgba(52,211,153,.7)', borderRadius: 3 }
+        ]
+      },
+      options: Object.assign({}, CO, { plugins: Object.assign({}, CO.plugins, { legend: Object.assign({}, CO.plugins.legend, { display: true }) }) })
+    });
+  }
+}
+
+async function fetchData() {
+  setBanner('loading', 'Connecting to Google Sheets\u2026');
+  try {
+    var resp = await fetch(SCRIPT_URL);
+    var d = await resp.json();
+    if (d.error) { setBanner('error', 'Error: ' + d.error); return; }
+    if (d.noData) { setBanner('error', 'No data for ' + (d.month || 'selected period')); return; }
+    renderMetrics(d);
+    renderCharts(d);
+    setBanner('success', 'Data loaded \u2014 ' + (d.lastUpdated || ''));
+  } catch (err) {
+    setBanner('error', 'Failed to load: ' + err.message);
+  }
+}
+
+function applyFilter(el, month) {
+  var pills = document.querySelectorAll('.filter-pill');
+  pills.forEach(function(p) { p.classList.remove('active'); });
+  el.classList.add('active');
+  fetchDataWithFilter();
+}
+
+function fetchDataWithFilter() {
+  var active = document.querySelector('.filter-pill.active');
+  var month = active ? active.textContent.trim() : 'All';
+  setBanner('loading', 'Filtering data\u2026');
+  fetch(SCRIPT_URL + '?month=' + encodeURIComponent(month))
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.error) { setBanner('error', 'Error: ' + d.error); return; }
+      if (d.noData) { setBanner('error', 'No data for ' + month); return; }
+      renderMetrics(d);
+      renderCharts(d);
+      setBanner('success', 'Data loaded \u2014 ' + (d.lastUpdated || ''));
+    })
+    .catch(function(err) { setBanner('error', 'Failed: ' + err.message); });
+}
+
+document.addEventListener('DOMContentLoaded', fetchData);
+</script>
+</body>
+</html>
